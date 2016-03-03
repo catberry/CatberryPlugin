@@ -1,20 +1,15 @@
 package org.buffagon.intellij.catberry;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
- * Форма настроек плагина.
+ * Catberry Plugin settings form.
  *
- * @author Прокофьев Алексей
+ * @author Prokofiev Alex
  */
 public class CatberryProjectSettingsPanel {
   private JPanel rootPanel;

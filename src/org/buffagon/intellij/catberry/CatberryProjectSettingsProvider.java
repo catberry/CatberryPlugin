@@ -20,9 +20,9 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Профайдер настроек плагина.
+ * Catberry settings provider.
  *
- * @author Прокофьев Алексей
+ * @author Prokofiev Alex
  */
 @State(name = "CatberryProjectSettingsProvider", storages = {@Storage(file = StoragePathMacros.PROJECT_FILE)})
 public class CatberryProjectSettingsProvider

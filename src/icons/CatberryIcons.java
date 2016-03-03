@@ -7,7 +7,7 @@ import javax.swing.*;
 /**
  * Содержит перечисление иконок плагина
  *
- * @author Прокофьев Алексей
+ * @author Prokofiev Alex
  */
 public class CatberryIcons {
   public static final Icon MODULE_FILE_TYPE = IconLoader.getIcon("/icons/logo_16px.png");

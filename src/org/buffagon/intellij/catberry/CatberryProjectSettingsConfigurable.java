@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 /**
- * Регистрирует пункт меню "Odoo" в настройках проекта.
+ * Register menu item "Catberry JS" in project settings.
  *
- * @author Прокофьев Алексей
+ * @author Prokofiev Alex
  */
 public class CatberryProjectSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
   private CatberryProjectSettingsPanel myPanel;

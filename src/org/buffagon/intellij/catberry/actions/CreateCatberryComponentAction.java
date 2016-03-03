@@ -2,9 +2,6 @@ package org.buffagon.intellij.catberry.actions;
 
 import com.intellij.ide.IdeView;
 import com.intellij.ide.actions.CreateDirectoryOrPackageHandler;
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.json.JsonFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -22,15 +19,14 @@ import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * Действие для создания нового Odoo модуля.
+ * Action for create new Catberry component.
  *
- * @author Прокофьев Алексей
+ * @author Prokofiev Alex
  */
-public class CreateCatberryModuleAction extends DumbAwareAction {
-  private static final Logger LOG = Logger.getInstance("#org.buffagon.intellij.catberry.actions.CreateCatberryModuleAction");
+public class CreateCatberryComponentAction extends DumbAwareAction {
+  private static final Logger LOG = Logger.getInstance("#org.buffagon.intellij.catberry.actions.CreateCatberryComponentAction");
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
@@ -50,8 +46,8 @@ public class CreateCatberryModuleAction extends DumbAwareAction {
           createCatberryModuleStructure((PsiDirectory) element);
       }
     };
-    Messages.showInputDialog(project, "Please inter new Catberry module name",
-                             "New Catberry Module", CatberryIcons.LOGO, "new_module", validator);
+    Messages.showInputDialog(project, "Please inter new Cat-Component name",
+                             "New Cat-Component", CatberryIcons.LOGO, "new_module", validator);
     final PsiFileSystemItem result = validator.getCreatedElement();
     if (result != null && result instanceof PsiDirectory) {
       PsiFile moduleFile = ((PsiDirectory) result).findFile(CatberryConstants.DEFAULT_MODULE_JS);
@@ -71,7 +67,7 @@ public class CreateCatberryModuleAction extends DumbAwareAction {
       CatberryConstants.CAT_COMPONENT_JSON, JsonFileType.INSTANCE,
       "{\n" +
         "\t\"name\": \""+directory.getName()+"\",\n" +
-        "\t\"template\": \"./template.hbs\",\n" +
+        "\t\"template\": \"./template.hbs\"\n" +
       "}\n"
     );
     directory.add(file);

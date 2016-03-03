@@ -1,9 +1,7 @@
 package org.buffagon.intellij.catberry;
 
 /**
- * Содержит наиболее часто используемые константы.
- *
- * @author Прокофьев Алексей
+ * @author Prokofiev Alex
  */
 public final class CatberryConstants {
   public static final String DEFAULT_MODULE_JS = "index.js";
