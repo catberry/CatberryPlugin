@@ -1,0 +1,48 @@
+<idea-plugin version="2">
+  <id>org.buffagon.intellij.catberry</id>
+  <name>Catberry Framework support</name>
+  <version>1.0</version>
+  <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Alex Prokofiev</vendor>
+
+  <description><![CDATA[
+      Catberry is a framework with Flux architecture, isomorphic web-components and progressive rendering
+    ]]></description>
+
+  <change-notes><![CDATA[
+    TODO:
+    ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="139"/>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+
+  <depends>com.intellij.modules.xml</depends>
+  <depends>com.intellij.modules.json</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable instance="org.buffagon.intellij.catberry.CatberryProjectSettingsConfigurable"/>
+  </extensions>
+
+
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <actions>
+    <action id="NewCatberryModule" class="org.buffagon.intellij.catberry.actions.CreateCatberryModuleAction" text="Odoo Module"
+            description="Create a new directory and Catberry module content." icon="CatberryIcons.MODULE_FILE_TYPE">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+    </action>
+  </actions>
+
+  <project-components>
+    <component>
+      <implementation-class>org.buffagon.intellij.catberry.CatberryProjectSettingsProvider</implementation-class>
+      <interface-class>org.buffagon.intellij.catberry.CatberryProjectSettingsProvider</interface-class>
+    </component>
+  </project-components>
+</idea-plugin>
