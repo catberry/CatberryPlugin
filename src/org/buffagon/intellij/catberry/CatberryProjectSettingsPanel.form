@@ -35,7 +35,9 @@
         </constraints>
         <properties>
           <model>
-            <item value="Handlebars"/>
+            <item value="handlebars"/>
+            <item value="dust"/>
+            <item value="jade"/>
           </model>
         </properties>
       </component>

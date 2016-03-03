@@ -38,8 +38,8 @@ public class CatberryProjectSettingsProvider
   }
 
   public static class State {
-    public boolean myCatberryEnabled = false;
-    public String myTemplateEngineName = "Handlebars";
+    public boolean myCatberryEnabled = true;
+    public String myTemplateEngineName = "handlebars";
   }
 
   private State myState = new State();
