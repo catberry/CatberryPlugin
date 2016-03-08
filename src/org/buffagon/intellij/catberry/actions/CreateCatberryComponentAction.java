@@ -47,7 +47,7 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
       return;
     }
     String name =Messages.showInputDialog(project, "Please inter new Cat-Component name",
-                             "New Cat-Component", CatberryIcons.LOGO, "component", null);
+                             "New Cat-Component", CatberryIcons.LOGO_16, "component", null);
     if(name == null) {
       return;
     }
@@ -96,6 +96,6 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
     if (!settingsProvider.isCatberryEnabled())
       return false;
     final PsiDirectory[] directories = ideView.getDirectories();
-    return directories.length == 1 && directories[0].getVirtualFile().getPath().contains("cat-components");
+    return directories.length == 1 && directories[0].getVirtualFile().getPath().contains("catberry_components");
   }
 }

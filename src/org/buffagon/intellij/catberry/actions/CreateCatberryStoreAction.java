@@ -39,7 +39,7 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
       return;
     }
     String name =Messages.showInputDialog(project, "Please inter new Cat-Store name",
-                             "New Cat-Store", CatberryIcons.LOGO, "Store", null);
+                             "New Cat-Store", CatberryIcons.LOGO_16, "Store", null);
     if(name == null) {
       return;
     }
@@ -84,6 +84,6 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
     if (!settingsProvider.isCatberryEnabled())
       return false;
     final PsiDirectory[] directories = ideView.getDirectories();
-    return directories.length == 1 && directories[0].getVirtualFile().getPath().contains("cat-stores");
+    return directories.length == 1 && directories[0].getVirtualFile().getPath().contains("catberry_stores");
   }
 }

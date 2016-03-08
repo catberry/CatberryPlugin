@@ -10,7 +10,7 @@ import javax.swing.*;
  * @author Prokofiev Alex
  */
 public class CatberryIcons {
-  public static final Icon MODULE_FILE_TYPE = IconLoader.getIcon("/icons/logo_16px.png");
-  public static final Icon CONFIGURATION = IconLoader.getIcon("/icons/logo_16px.png");
-  public static final Icon LOGO = IconLoader.getIcon("/icons/logo_64px.png");
+  public static final Icon LOGO_16 = IconLoader.getIcon("/icons/logo_16.png");
+  public static final Icon LOGO_64 = IconLoader.getIcon("/icons/logo_64.png");
+  public static final Icon LOGO_122 = IconLoader.getIcon("/icons/logo_122.png");
 }
