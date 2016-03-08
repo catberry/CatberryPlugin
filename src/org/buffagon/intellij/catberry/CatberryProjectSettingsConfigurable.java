@@ -38,7 +38,7 @@ public class CatberryProjectSettingsConfigurable implements SearchableConfigurab
   @Nls
   @Override
   public String getDisplayName() {
-    return "Catberry JS";
+    return CatberryBundle.message("catberry.project.title");
   }
 
   @Nullable

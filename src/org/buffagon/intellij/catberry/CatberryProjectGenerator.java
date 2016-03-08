@@ -19,14 +19,14 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * @author buffagon.
+ @author Prokofiev Alex
  */
 public class CatberryProjectGenerator extends WebProjectTemplate<Object> {
   @Nls
   @NotNull
   @Override
   public String getName() {
-    return "Catberry Project";
+    return CatberryBundle.message("catberry.project.title");
   }
 
   @Override
@@ -36,7 +36,7 @@ public class CatberryProjectGenerator extends WebProjectTemplate<Object> {
 
   @Override
   public String getDescription() {
-    return "Create project from catberry cli util";
+    return CatberryBundle.message("catberry.project.description");
   }
 
   @Override

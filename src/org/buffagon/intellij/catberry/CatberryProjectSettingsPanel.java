@@ -15,6 +15,8 @@ public class CatberryProjectSettingsPanel {
   private JPanel rootPanel;
   private JCheckBox enableCatberrySupportField;
   private JComboBox templateEngineField;
+  private JTextField componentsRootField;
+  private JTextField storesRootField;
 
   private CatberryProjectSettingsProvider mySettingsProvider;
 
@@ -39,17 +41,23 @@ public class CatberryProjectSettingsPanel {
 
   public boolean isModified() {
     return !(Comparing.equal(mySettingsProvider.isCatberryEnabled(), enableCatberrySupportField.isSelected()) &&
-           Comparing.equal(mySettingsProvider.getTemplateEngineName(), templateEngineField.getSelectedItem().toString()));
+        Comparing.equal(mySettingsProvider.getTemplateEngineName(), templateEngineField.getSelectedItem().toString()) &&
+        Comparing.equal(mySettingsProvider.getComponentsRoot(), componentsRootField.getText()) &&
+        Comparing.equal(mySettingsProvider.getStoresRoot(), storesRootField.getText()));
   }
 
   public void apply() {
     mySettingsProvider.setCatberryEnabled(enableCatberrySupportField.isSelected());
     mySettingsProvider.setTemplateEngineName(templateEngineField.getSelectedItem().toString());
+    mySettingsProvider.setComponentsRoot(componentsRootField.getText());
+    mySettingsProvider.setStoresRoot(storesRootField.getText());
   }
 
   public void reset() {
     enableCatberrySupportField.setSelected(mySettingsProvider.isCatberryEnabled());
     templateEngineField.setSelectedItem(mySettingsProvider.getTemplateEngineName());
+    componentsRootField.setText(mySettingsProvider.getComponentsRoot());
+    storesRootField.setText(mySettingsProvider.getStoresRoot());
     updateUI();
   }
 }

@@ -6,7 +6,7 @@ import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author buffagon.
+ @author Prokofiev Alex
  */
 public class CatberryComponentStubIndex extends StringStubIndexExtension<PsiFile> {
     public static final StubIndexKey<String, PsiFile> KEY =

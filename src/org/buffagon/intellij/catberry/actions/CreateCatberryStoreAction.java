@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import icons.CatberryIcons;
+import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * Action for create new Catberry component.
+ * Action for create new Catberry store.
  *
  * @author Prokofiev Alex
  */
@@ -35,29 +36,31 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
     }
     final Project project = e.getData(CommonDataKeys.PROJECT);
     final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
-    if (directory == null) {
+    if (directory == null)
       return;
-    }
-    String name =Messages.showInputDialog(project, "Please inter new Cat-Store name",
-                             "New Cat-Store", CatberryIcons.LOGO_16, "Store", null);
-    if(name == null) {
+
+    String name = Messages.showInputDialog(project, CatberryBundle.message("new.cat.store.prompt"),
+        CatberryBundle.message("new.cat.store"), CatberryIcons.LOGO_16, "Store", null);
+    if (name == null)
       return;
-    }
+
     final String path = directory.getVirtualFile().getPath();
 
-    if(!createCatberryStore(path, name))
+    if (!createCatberryStore(path, name))
       return;
+
     LocalFileSystem.getInstance().refreshWithoutFileWatcher(false);
     PsiFile storeFile = directory.findFile(name);
-    if(storeFile == null)
+    if (storeFile == null)
       return;
+
     view.selectElement(storeFile);
   }
 
   private boolean createCatberryStore(String path, String name) {
     try {
-      Process process = new ProcessBuilder("catberry", "addstore","--dest="+path, name).start();
-      return  process.waitFor() == 0;
+      Process process = new ProcessBuilder("catberry", "addstore", "--dest=" + path, name).start();
+      return process.waitFor() == 0;
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {
@@ -77,13 +80,15 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
     Project project = e.getData(CommonDataKeys.PROJECT);
 
     final IdeView ideView = e.getData(LangDataKeys.IDE_VIEW);
-    if (project == null || ideView == null) {
+    if (project == null || ideView == null)
       return false;
-    }
+
     CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
     if (!settingsProvider.isCatberryEnabled())
       return false;
+
     final PsiDirectory[] directories = ideView.getDirectories();
-    return directories.length == 1 && directories[0].getVirtualFile().getPath().contains("catberry_stores");
+    return (directories.length == 1 &&
+        directories[0].getVirtualFile().getPath().contains(settingsProvider.getStoresRoot()));
   }
 }

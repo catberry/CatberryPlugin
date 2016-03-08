@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Dennis.Ushakov
+ @author Prokofiev Alex
  */
 public class CatberryProjectTemplateFactory extends ProjectTemplatesFactory {
   @NotNull

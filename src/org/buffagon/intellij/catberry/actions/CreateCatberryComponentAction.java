@@ -19,6 +19,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiFileSystemItem;
 import icons.CatberryIcons;
+import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
 import org.jetbrains.annotations.NotNull;
@@ -38,38 +39,42 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
-    if (view == null) {
+    if (view == null)
       return;
-    }
+
     final Project project = e.getData(CommonDataKeys.PROJECT);
     final PsiDirectory directory = DirectoryChooserUtil.getOrChooseDirectory(view);
-    if (directory == null) {
+    if (directory == null)
       return;
-    }
-    String name =Messages.showInputDialog(project, "Please inter new Cat-Component name",
-                             "New Cat-Component", CatberryIcons.LOGO_16, "component", null);
-    if(name == null) {
+
+    String name = Messages.showInputDialog(project, CatberryBundle.message("new.cat.component.prompt"),
+        CatberryBundle.message("new.cat.component"), CatberryIcons.LOGO_16, "component", null);
+    if (name == null)
       return;
-    }
+
     final String path = directory.getVirtualFile().getPath();
 
     String preset = CatberryProjectSettingsProvider.getInstance(project).getTemplateEngineName();
-    if(!createCatberryModuleStructure(path, name, preset))
+    if (!createCatberryModuleStructure(path, name, preset))
       return;
+
     LocalFileSystem.getInstance().refreshWithoutFileWatcher(false);
     PsiDirectory componentDir = directory.findSubdirectory(name);
-    if(componentDir == null)
+    if (componentDir == null)
       return;
-    PsiFile componentFile = componentDir.findFile("cat-component.json");
-    if(componentFile == null)
+
+    PsiFile componentFile = componentDir.findFile(CatberryConstants.CAT_COMPONENT_JSON);
+    if (componentFile == null)
       return;
+
     view.selectElement(componentFile);
   }
 
-  private boolean createCatberryModuleStructure(String path, String name, String preset) {
+  private boolean createCatberryModuleStructure(String path, String name, String template) {
     try {
-      Process process = new ProcessBuilder("catberry", "addcomp","--dest="+path, "--preset="+preset, name).start();
-      return  process.waitFor() == 0;
+      Process process = new ProcessBuilder("catberry", "addcomp", "--dest=" + path, "--preset=" + template, name)
+          .start();
+      return process.waitFor() == 0;
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {
@@ -89,13 +94,15 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
     Project project = e.getData(CommonDataKeys.PROJECT);
 
     final IdeView ideView = e.getData(LangDataKeys.IDE_VIEW);
-    if (project == null || ideView == null) {
+    if (project == null || ideView == null)
       return false;
-    }
+
     CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
     if (!settingsProvider.isCatberryEnabled())
       return false;
+
     final PsiDirectory[] directories = ideView.getDirectories();
-    return directories.length == 1 && directories[0].getVirtualFile().getPath().contains("catberry_components");
+    return (directories.length == 1 &&
+        directories[0].getVirtualFile().getPath().contains(settingsProvider.getComponentsRoot()));
   }
 }

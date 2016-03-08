@@ -29,17 +29,17 @@ public class CatberryProjectSettingsProvider
     implements PersistentStateComponent<CatberryProjectSettingsProvider.State>, ProjectComponent {
   @Override
   public void projectOpened() {
-
   }
 
   @Override
   public void projectClosed() {
-
   }
 
   public static class State {
     public boolean myCatberryEnabled = true;
     public String myTemplateEngineName = "handlebars";
+    public String myComponentsRoot = "catberry_components";
+    public String myStoresRoot = "catberry_stores";
   }
 
   private State myState = new State();
@@ -57,6 +57,8 @@ public class CatberryProjectSettingsProvider
   public void loadState(State state) {
     myState.myCatberryEnabled = state.myCatberryEnabled;
     myState.myTemplateEngineName = state.myTemplateEngineName;
+    myState.myComponentsRoot = state.myComponentsRoot;
+    myState.myStoresRoot = state.myStoresRoot;
   }
 
   public boolean isCatberryEnabled() {
@@ -73,6 +75,22 @@ public class CatberryProjectSettingsProvider
 
   public void setTemplateEngineName(String name) {
     myState.myTemplateEngineName = name;
+  }
+
+  public String getComponentsRoot() {
+    return myState.myComponentsRoot;
+  }
+
+  public void setComponentsRoot(String root) {
+    myState.myComponentsRoot = root;
+  }
+
+  public String getStoresRoot() {
+    return myState.myStoresRoot;
+  }
+
+  public void setStoresRoot(String root) {
+    myState.myStoresRoot = root;
   }
 
 
