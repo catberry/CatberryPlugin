@@ -22,11 +22,14 @@
   <depends>com.intellij.modules.xml</depends>
   <depends>com.intellij.modules.json</depends>
 
+
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable instance="org.buffagon.intellij.catberry.CatberryProjectSettingsConfigurable"/>
 
     <directoryProjectGenerator implementation="org.buffagon.intellij.catberry.CatberryProjectGenerator"/>
     <projectTemplatesFactory implementation="org.buffagon.intellij.catberry.CatberryProjectTemplateFactory"/>
+
+    <psi.referenceContributor implementation="org.buffagon.intellij.catberry.CatberryComponentReferenceContributor"/>
   </extensions>
 
 
