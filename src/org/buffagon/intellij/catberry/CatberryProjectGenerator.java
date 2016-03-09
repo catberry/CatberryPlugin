@@ -1,6 +1,5 @@
 package org.buffagon.intellij.catberry;
 
-import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -8,12 +7,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.CatberryIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -21,7 +18,7 @@ import java.io.IOException;
 /**
  * @author Prokofiev Alex
  */
-public class CatberryProjectGenerator extends WebProjectTemplate<Object> {
+public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnlySettings> implements Comparable<CatberryProjectGenerator>{
   public static final Logger LOG = Logger.getInstance(CatberryProjectGenerator.class.getName());
 
   @Nls
@@ -42,7 +39,7 @@ public class CatberryProjectGenerator extends WebProjectTemplate<Object> {
   }
 
   @Override
-  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir, @NotNull Object data, @NotNull final Module module) {
+  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir, @NotNull CatberryReadOnlySettings data, @NotNull final Module module) {
     ApplicationManager.getApplication().runWriteAction(
       new Runnable() {
         public void run() {
@@ -85,40 +82,12 @@ public class CatberryProjectGenerator extends WebProjectTemplate<Object> {
 
   @NotNull
   @Override
-  public GeneratorPeer<Object> createPeer() {
-    return new GeneratorPeer<Object>() {
-      @NotNull
-      @Override
-      public JComponent getComponent() {
-        return new JPanel();
-      }
+  public GeneratorPeer<CatberryReadOnlySettings> createPeer() {
+    return new CatberryGeneratorPeer();
+  }
 
-      @Override
-      public void buildUI(@NotNull SettingsStep settingsStep) {
-
-      }
-
-      @NotNull
-      @Override
-      public Object getSettings() {
-        return new Object();
-      }
-
-      @Nullable
-      @Override
-      public ValidationInfo validate() {
-        return null;
-      }
-
-      @Override
-      public boolean isBackgroundJobRunning() {
-        return false;
-      }
-
-      @Override
-      public void addSettingsStateListener(@NotNull SettingsStateListener settingsStateListener) {
-
-      }
-    };
+  @Override
+  public int compareTo(@NotNull final CatberryProjectGenerator generator) {
+    return getName().compareTo(generator.getName());
   }
 }

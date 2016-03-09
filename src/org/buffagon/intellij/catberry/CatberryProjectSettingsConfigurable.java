@@ -51,8 +51,8 @@ public class CatberryProjectSettingsConfigurable implements SearchableConfigurab
   @Override
   public JComponent createComponent() {
     if (myPanel == null)
-      myPanel = new CatberryProjectSettingsPanel();
-    return myPanel.getPanel(mySettingsProvider);
+      myPanel = new CatberryProjectSettingsPanel(mySettingsProvider);
+    return myPanel.getRootPanel();
   }
 
   @Override

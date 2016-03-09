@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @State(name = "CatberryProjectSettingsProvider", storages = {@Storage(file = StoragePathMacros.PROJECT_FILE)})
 public class CatberryProjectSettingsProvider
-    implements PersistentStateComponent<CatberryProjectSettingsProvider.State>, ProjectComponent {
+    implements PersistentStateComponent<CatberryProjectSettings>, ProjectComponent, CatberryReadWriteSettings {
   @Override
   public void projectOpened() {
   }
@@ -35,62 +35,55 @@ public class CatberryProjectSettingsProvider
   public void projectClosed() {
   }
 
-  public static class State {
-    public boolean myCatberryEnabled = true;
-    public String myTemplateEngineName = "handlebars";
-    public String myComponentsRoot = "catberry_components";
-    public String myStoresRoot = "catberry_stores";
-  }
-
-  private State myState = new State();
+  private CatberryProjectSettings settings = new CatberryProjectSettings();
 
   public static CatberryProjectSettingsProvider getInstance(Project project) {
     return project.getComponent(CatberryProjectSettingsProvider.class);
   }
 
   @Override
-  public State getState() {
-    return myState;
+  public CatberryProjectSettings getState() {
+    return settings;
   }
 
   @Override
-  public void loadState(State state) {
-    myState.myCatberryEnabled = state.myCatberryEnabled;
-    myState.myTemplateEngineName = state.myTemplateEngineName;
-    myState.myComponentsRoot = state.myComponentsRoot;
-    myState.myStoresRoot = state.myStoresRoot;
+  public void loadState(CatberryProjectSettings state) {
+    settings.setCatberryEnabled(state.isCatberryEnabled());
+    settings.setTemplateEngineName(state.getTemplateEngineName());
+    settings.setComponentsRoot(state.getComponentsRoot());
+    settings.setStoresRoot(state.getStoresRoot());
   }
 
   public boolean isCatberryEnabled() {
-    return myState.myCatberryEnabled;
+    return settings.isCatberryEnabled();
   }
 
   public void setCatberryEnabled(boolean value) {
-    myState.myCatberryEnabled = value;
+    settings.setCatberryEnabled(value);
   }
 
   public String getTemplateEngineName() {
-    return myState.myTemplateEngineName;
+    return settings.getTemplateEngineName();
   }
 
   public void setTemplateEngineName(String name) {
-    myState.myTemplateEngineName = name;
+    settings.setTemplateEngineName(name);
   }
 
   public String getComponentsRoot() {
-    return myState.myComponentsRoot;
+    return settings.getComponentsRoot();
   }
 
   public void setComponentsRoot(String root) {
-    myState.myComponentsRoot = root;
+    settings.setComponentsRoot(root);
   }
 
   public String getStoresRoot() {
-    return myState.myStoresRoot;
+    return settings.getStoresRoot();
   }
 
   public void setStoresRoot(String root) {
-    myState.myStoresRoot = root;
+    settings.setStoresRoot(root);
   }
 
 

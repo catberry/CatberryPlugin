@@ -17,11 +17,13 @@ public class CatberryProjectSettingsPanel {
   private JComboBox templateEngineField;
   private JTextField componentsRootField;
   private JTextField storesRootField;
+  private JPanel settingsPanel;
 
-  private CatberryProjectSettingsProvider mySettingsProvider;
+  private CatberryReadWriteSettings settings;
 
 
-  public CatberryProjectSettingsPanel() {
+  public CatberryProjectSettingsPanel(CatberryReadWriteSettings settings) {
+    this.settings = settings;
     enableCatberrySupportField.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -31,33 +33,36 @@ public class CatberryProjectSettingsPanel {
   }
 
   private void updateUI() {
-    templateEngineField.setEnabled(enableCatberrySupportField.isSelected());
+    settingsPanel.setEnabled(enableCatberrySupportField.isSelected());
   }
 
-  public JComponent getPanel(CatberryProjectSettingsProvider provider) {
-    mySettingsProvider = provider;
+  public JPanel getRootPanel() {
     return rootPanel;
   }
 
+  public JPanel getSettingsPanel() {
+    return settingsPanel;
+  }
+
   public boolean isModified() {
-    return !(Comparing.equal(mySettingsProvider.isCatberryEnabled(), enableCatberrySupportField.isSelected()) &&
-        Comparing.equal(mySettingsProvider.getTemplateEngineName(), templateEngineField.getSelectedItem().toString()) &&
-        Comparing.equal(mySettingsProvider.getComponentsRoot(), componentsRootField.getText()) &&
-        Comparing.equal(mySettingsProvider.getStoresRoot(), storesRootField.getText()));
+    return !(Comparing.equal(settings.isCatberryEnabled(), enableCatberrySupportField.isSelected()) &&
+        Comparing.equal(settings.getTemplateEngineName(), templateEngineField.getSelectedItem().toString()) &&
+        Comparing.equal(settings.getComponentsRoot(), componentsRootField.getText()) &&
+        Comparing.equal(settings.getStoresRoot(), storesRootField.getText()));
   }
 
   public void apply() {
-    mySettingsProvider.setCatberryEnabled(enableCatberrySupportField.isSelected());
-    mySettingsProvider.setTemplateEngineName(templateEngineField.getSelectedItem().toString());
-    mySettingsProvider.setComponentsRoot(componentsRootField.getText());
-    mySettingsProvider.setStoresRoot(storesRootField.getText());
+    settings.setCatberryEnabled(enableCatberrySupportField.isSelected());
+    settings.setTemplateEngineName(templateEngineField.getSelectedItem().toString());
+    settings.setComponentsRoot(componentsRootField.getText());
+    settings.setStoresRoot(storesRootField.getText());
   }
 
   public void reset() {
-    enableCatberrySupportField.setSelected(mySettingsProvider.isCatberryEnabled());
-    templateEngineField.setSelectedItem(mySettingsProvider.getTemplateEngineName());
-    componentsRootField.setText(mySettingsProvider.getComponentsRoot());
-    storesRootField.setText(mySettingsProvider.getStoresRoot());
+    enableCatberrySupportField.setSelected(settings.isCatberryEnabled());
+    templateEngineField.setSelectedItem(settings.getTemplateEngineName());
+    componentsRootField.setText(settings.getComponentsRoot());
+    storesRootField.setText(settings.getStoresRoot());
     updateUI();
   }
 }
