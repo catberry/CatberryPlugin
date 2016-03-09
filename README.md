@@ -7,4 +7,4 @@ Intellij platform plugin for Catberry JS framework
 * Create Catberry stores
 
 #### Builds:
-[CatberryPlugin#1](https://yadi.sk/d/Aqx_ppP-pzHxr)
+[Last build](https://yadi.sk/d/ocwfXU6VpziPd)
