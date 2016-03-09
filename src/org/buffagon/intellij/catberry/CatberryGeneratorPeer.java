@@ -27,12 +27,12 @@ public class CatberryGeneratorPeer implements WebProjectGenerator.GeneratorPeer<
   @NotNull
   @Override
   public JComponent getComponent() {
-    return panel.getSettingsPanel();
+    return panel.getBasePanel();
   }
 
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
-    settingsStep.addSettingsComponent(panel.getSettingsPanel());
+    settingsStep.addSettingsComponent(panel.getBasePanel());
   }
 
   @NotNull

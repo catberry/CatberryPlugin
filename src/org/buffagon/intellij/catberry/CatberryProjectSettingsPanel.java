@@ -17,7 +17,8 @@ public class CatberryProjectSettingsPanel {
   private JComboBox templateEngineField;
   private JTextField componentsRootField;
   private JTextField storesRootField;
-  private JPanel settingsPanel;
+  private JPanel basePanel;
+  private JPanel optionalPanel;
 
   private CatberryReadWriteSettings settings;
 
@@ -33,15 +34,18 @@ public class CatberryProjectSettingsPanel {
   }
 
   private void updateUI() {
-    settingsPanel.setEnabled(enableCatberrySupportField.isSelected());
+    enableCatberrySupportField.setEnabled(enableCatberrySupportField.isSelected());
+    templateEngineField.setEnabled(enableCatberrySupportField.isSelected());
+    componentsRootField.setEnabled(enableCatberrySupportField.isSelected());
+    storesRootField.setEnabled(enableCatberrySupportField.isSelected());
   }
 
   public JPanel getRootPanel() {
     return rootPanel;
   }
 
-  public JPanel getSettingsPanel() {
-    return settingsPanel;
+  public JPanel getBasePanel() {
+    return basePanel;
   }
 
   public boolean isModified() {

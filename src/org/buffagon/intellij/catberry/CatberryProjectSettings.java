@@ -60,4 +60,11 @@ public class CatberryProjectSettings implements CatberryReadWriteSettings {
   public void setStoresRoot(String storesRoot) {
     this.storesRoot = storesRoot;
   }
+
+  public static void copy(CatberryReadOnlySettings source, CatberryReadWriteSettings target) {
+    target.setCatberryEnabled(source.isCatberryEnabled());
+    target.setComponentsRoot(source.getComponentsRoot());
+    target.setStoresRoot(source.getStoresRoot());
+    target.setTemplateEngineName(source.getTemplateEngineName());
+  }
 }

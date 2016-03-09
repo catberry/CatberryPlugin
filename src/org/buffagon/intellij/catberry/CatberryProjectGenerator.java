@@ -18,7 +18,8 @@ import java.io.IOException;
 /**
  * @author Prokofiev Alex
  */
-public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnlySettings> implements Comparable<CatberryProjectGenerator>{
+public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnlySettings>
+    implements Comparable<CatberryProjectGenerator>{
   public static final Logger LOG = Logger.getInstance(CatberryProjectGenerator.class.getName());
 
   @Nls
@@ -39,13 +40,16 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
   }
 
   @Override
-  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir, @NotNull CatberryReadOnlySettings data, @NotNull final Module module) {
+  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
+                              @NotNull final CatberryReadOnlySettings data, @NotNull final Module module) {
     ApplicationManager.getApplication().runWriteAction(
       new Runnable() {
         public void run() {
-          final ModifiableRootModel modifiableModel = ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(
-            module);
-          String template = CatberryProjectSettingsProvider.getInstance(project).getTemplateEngineName();
+          final ModifiableRootModel modifiableModel =
+              ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
+          CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
+          CatberryProjectSettings.copy(data, settingsProvider);
+          final String template = data.getTemplateEngineName();
           try {
             ProcessBuilder processBuilder = new ProcessBuilder();
 
