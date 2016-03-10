@@ -47,8 +47,6 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
         public void run() {
           final ModifiableRootModel modifiableModel =
               ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
-          CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
-          CatberryProjectSettings.copy(data, settingsProvider);
           final String template = data.getTemplateEngineName();
           try {
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -78,6 +76,10 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
           } catch (InterruptedException e) {
             LOG.error(e.toString());
           }
+
+          CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
+          CatberryProjectSettings.copy(data, settingsProvider);
+
           ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel);
         }
       }

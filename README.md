@@ -8,7 +8,7 @@ Intellij platform plugin for Catberry JS framework
 
 #### How to use:
 * Install [catberry-cli](https://www.npmjs.com/package/catberry-cli)
-* Download [plugin](https://yadi.sk/d/ocwfXU6VpziPd)
+* Download [plugin](https://yadi.sk/d/Ws4bwFAjq3oxN)
 * Add plugin from disk in your jetbrains ide (tested: Idea, WebStorm)
 * Create project (for new project):
 	* StaticWeb -> Catberry JS (for Idea)
