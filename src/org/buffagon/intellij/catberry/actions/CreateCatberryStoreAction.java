@@ -2,7 +2,6 @@ package org.buffagon.intellij.catberry.actions;
 
 import com.intellij.ide.IdeView;
 import com.intellij.ide.util.DirectoryChooserUtil;
-import com.intellij.json.JsonFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -13,10 +12,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
-import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +25,7 @@ import java.io.IOException;
  * @author Prokofiev Alex
  */
 public class CreateCatberryStoreAction extends DumbAwareAction {
+  public static final Logger LOG = Logger.getInstance(CreateCatberryStoreAction.class.getName());
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
@@ -62,9 +60,9 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
       Process process = new ProcessBuilder("catberry", "addstore", "--dest=" + path, name).start();
       return process.waitFor() == 0;
     } catch (IOException e) {
-      e.printStackTrace();
+      LOG.error(e);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      LOG.error(e);
     }
     return false;
   }

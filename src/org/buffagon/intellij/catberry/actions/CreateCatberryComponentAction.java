@@ -5,6 +5,7 @@ import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -25,6 +26,8 @@ import java.io.IOException;
  * @author Prokofiev Alex
  */
 public class CreateCatberryComponentAction extends DumbAwareAction {
+  public static final Logger LOG = Logger.getInstance(CreateCatberryStoreAction.class.getName());
+
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
@@ -65,9 +68,9 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
           .start();
       return process.waitFor() == 0;
     } catch (IOException e) {
-      e.printStackTrace();
+      LOG.error(e);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      LOG.error(e);
     }
     return false;
   }

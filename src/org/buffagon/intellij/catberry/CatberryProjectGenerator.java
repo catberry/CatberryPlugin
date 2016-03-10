@@ -72,9 +72,9 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
             Process process = processBuilder.start();
             process.waitFor();
           } catch (IOException e) {
-            LOG.error(e.toString());
+            LOG.error(e);
           } catch (InterruptedException e) {
-            LOG.error(e.toString());
+            LOG.error(e);
           }
 
           CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
