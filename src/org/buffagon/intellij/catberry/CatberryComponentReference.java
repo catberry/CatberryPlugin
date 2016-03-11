@@ -2,11 +2,15 @@ package org.buffagon.intellij.catberry;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 
 /**
@@ -24,7 +28,8 @@ public class CatberryComponentReference extends PsiReferenceBase<XmlTag>{
   public PsiElement resolve() {
     Project project = myElement.getProject();
 
-    return null;
+    Map<String, PsiFile> map = CatberryComponentUtils.findComponents(project);
+    return map.get(key);
   }
 
   @NotNull

@@ -21,6 +21,7 @@
 
   <depends>com.intellij.modules.xml</depends>
   <depends>com.intellij.modules.json</depends>
+  <depends>JavaScript</depends>
 
 
   <extensions defaultExtensionNs="com.intellij">
@@ -29,7 +30,13 @@
     <directoryProjectGenerator implementation="org.buffagon.intellij.catberry.CatberryProjectGenerator"/>
     <projectTemplatesFactory implementation="org.buffagon.intellij.catberry.CatberryProjectTemplateFactory"/>
 
+    <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.buffagon.intellij.catberry.CatberryComponentMarkerProvider"/>
+
     <psi.referenceContributor implementation="org.buffagon.intellij.catberry.CatberryComponentReferenceContributor"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+
   </extensions>
 
 
