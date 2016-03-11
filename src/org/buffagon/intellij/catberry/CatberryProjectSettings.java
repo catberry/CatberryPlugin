@@ -7,9 +7,9 @@ package org.buffagon.intellij.catberry;
  */
 public class CatberryProjectSettings implements CatberryReadWriteSettings {
   private boolean catberryEnabled = true;
-  private String templateEngineName = "handlebars";
-  private String componentsRoot = "catberry_components";
-  private String storesRoot = "catberry_stores";
+  private String templateEngineName = CatberryConstants.DEFAULT_TEMPLATE_ENGINE;
+  private String componentsRoot = CatberryConstants.CATBERRY_COMPONENTS;
+  private String storesRoot = CatberryConstants.CATBERRY_STORES;
 
   public CatberryProjectSettings() {
   }
