@@ -1,10 +1,12 @@
 package org.buffagon.intellij.catberry;
 
 import com.intellij.openapi.util.Comparing;
+import com.intellij.ui.CollectionComboBoxModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 /**
  * Catberry Plugin settings form.
@@ -31,6 +33,8 @@ public class CatberryProjectSettingsPanel {
         updateUI();
       }
     });
+    //TODO: ???
+    templateEngineField.setModel(new CollectionComboBoxModel(Arrays.asList(TemplateEngine.values())));
   }
 
   private void updateUI() {
@@ -50,23 +54,27 @@ public class CatberryProjectSettingsPanel {
 
   public boolean isModified() {
     return !(Comparing.equal(settings.isCatberryEnabled(), enableCatberrySupportField.isSelected()) &&
-        Comparing.equal(settings.getTemplateEngineName(), templateEngineField.getSelectedItem().toString()) &&
+        Comparing.equal(settings.getTemplateEngine(), templateEngineField.getSelectedItem().toString()) &&
         Comparing.equal(settings.getComponentsRoot(), componentsRootField.getText()) &&
         Comparing.equal(settings.getStoresRoot(), storesRootField.getText()));
   }
 
   public void apply() {
     settings.setCatberryEnabled(enableCatberrySupportField.isSelected());
-    settings.setTemplateEngineName(templateEngineField.getSelectedItem().toString());
+    settings.setTemplateEngine((TemplateEngine) templateEngineField.getSelectedItem());
     settings.setComponentsRoot(componentsRootField.getText());
     settings.setStoresRoot(storesRootField.getText());
   }
 
   public void reset() {
     enableCatberrySupportField.setSelected(settings.isCatberryEnabled());
-    templateEngineField.setSelectedItem(settings.getTemplateEngineName());
+    templateEngineField.setSelectedItem(settings.getTemplateEngine());
     componentsRootField.setText(settings.getComponentsRoot());
     storesRootField.setText(settings.getStoresRoot());
     updateUI();
+  }
+
+  private void createUIComponents() {
+
   }
 }

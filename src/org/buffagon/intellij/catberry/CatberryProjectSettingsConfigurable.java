@@ -18,9 +18,11 @@ import javax.swing.*;
 public class CatberryProjectSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
   private CatberryProjectSettingsPanel myPanel;
   private final CatberryProjectSettingsProvider mySettingsProvider;
+  private final CatberryProjectConfigurationManager projectConfigurationManager;
 
   public CatberryProjectSettingsConfigurable(Project project) {
     mySettingsProvider = CatberryProjectSettingsProvider.getInstance(project);
+    projectConfigurationManager = CatberryProjectConfigurationManager.getInstance(project);
   }
 
   @NotNull
@@ -63,6 +65,10 @@ public class CatberryProjectSettingsConfigurable implements SearchableConfigurab
   @Override
   public void apply() throws ConfigurationException {
     myPanel.apply();
+
+    projectConfigurationManager.updateConfiguration();
+
+
   }
 
   @Override

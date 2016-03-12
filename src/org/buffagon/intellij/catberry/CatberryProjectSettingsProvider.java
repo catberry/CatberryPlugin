@@ -49,7 +49,7 @@ public class CatberryProjectSettingsProvider
   @Override
   public void loadState(CatberryProjectSettings state) {
     settings.setCatberryEnabled(state.isCatberryEnabled());
-    settings.setTemplateEngineName(state.getTemplateEngineName());
+    settings.setTemplateEngine(state.getTemplateEngine());
     settings.setComponentsRoot(state.getComponentsRoot());
     settings.setStoresRoot(state.getStoresRoot());
   }
@@ -62,12 +62,12 @@ public class CatberryProjectSettingsProvider
     settings.setCatberryEnabled(value);
   }
 
-  public String getTemplateEngineName() {
-    return settings.getTemplateEngineName();
+  public TemplateEngine getTemplateEngine() {
+    return settings.getTemplateEngine();
   }
 
-  public void setTemplateEngineName(String name) {
-    settings.setTemplateEngineName(name);
+  public void setTemplateEngine(final TemplateEngine name) {
+    settings.setTemplateEngine(name);
   }
 
   public String getComponentsRoot() {

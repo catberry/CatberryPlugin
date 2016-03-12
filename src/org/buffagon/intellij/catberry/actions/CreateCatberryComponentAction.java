@@ -16,6 +16,7 @@ import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
+import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
 
     final String path = directory.getVirtualFile().getPath();
 
-    String preset = CatberryProjectSettingsProvider.getInstance(project).getTemplateEngineName();
-    if (!createCatberryModuleStructure(path, name, preset))
+    TemplateEngine templateEngine = CatberryProjectSettingsProvider.getInstance(project).getTemplateEngine();
+    if (!createCatberryModuleStructure(path, name, templateEngine))
       return;
 
     LocalFileSystem.getInstance().refreshWithoutFileWatcher(false);
@@ -62,9 +63,9 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
     view.selectElement(componentFile);
   }
 
-  private boolean createCatberryModuleStructure(String path, String name, String template) {
+  private boolean createCatberryModuleStructure(String path, String name, TemplateEngine templateEngine) {
     try {
-      Process process = new ProcessBuilder("catberry", "addcomp", "--dest=" + path, "--preset=" + template, name)
+      Process process = new ProcessBuilder("catberry", "addcomp", "--dest=" + path, "--preset=" + templateEngine, name)
           .start();
       return process.waitFor() == 0;
     } catch (IOException e) {

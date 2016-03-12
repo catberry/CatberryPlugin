@@ -47,13 +47,13 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
         public void run() {
           final ModifiableRootModel modifiableModel =
               ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
-          final String template = data.getTemplateEngineName();
+          final TemplateEngine templateEngine = data.getTemplateEngine();
           try {
             ProcessBuilder processBuilder = new ProcessBuilder();
 
             final String os = System.getProperty("os.name").toLowerCase();
             if(os.contains("win")) {
-              processBuilder.command("catberry", "init", "--dest=" + baseDir.getPath(), "empty-" + template);
+              processBuilder.command("catberry", "init", "--dest=" + baseDir.getPath(), "empty-" + templateEngine);
             } else {
               String env_path = System.getenv("PATH");
               if(!env_path.contains("/bin"))
@@ -65,7 +65,7 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
               if(!env_path.contains("/usr/local/bin"))
                 env_path = "/usr/local/bin:" + env_path;
 
-              final String command = "catberry init --dest=" + baseDir.getPath() + " empty-" + template;
+              final String command = "catberry init --dest=" + baseDir.getPath() + " empty-" + templateEngine;
               processBuilder.command("sh", "-c", "export PATH=" + env_path + "&& " + command);
             }
 

@@ -55,5 +55,9 @@
       <implementation-class>org.buffagon.intellij.catberry.CatberryProjectSettingsProvider</implementation-class>
       <interface-class>org.buffagon.intellij.catberry.CatberryProjectSettingsProvider</interface-class>
     </component>
+    <component>
+      <implementation-class>org.buffagon.intellij.catberry.CatberryProjectConfigurationManager
+      </implementation-class>
+    </component>
   </project-components>
 </idea-plugin>

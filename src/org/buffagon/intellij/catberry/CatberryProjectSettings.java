@@ -7,16 +7,16 @@ package org.buffagon.intellij.catberry;
  */
 public class CatberryProjectSettings implements CatberryReadWriteSettings {
   private boolean catberryEnabled = true;
-  private String templateEngineName = CatberryConstants.DEFAULT_TEMPLATE_ENGINE;
+  private TemplateEngine templateEngine = TemplateEngine.HANDLEBARS;
   private String componentsRoot = CatberryConstants.CATBERRY_COMPONENTS;
   private String storesRoot = CatberryConstants.CATBERRY_STORES;
 
   public CatberryProjectSettings() {
   }
 
-  public CatberryProjectSettings(boolean catberryEnabled, String templateEngineName, String componentsRoot, String storesRoot) {
+  public CatberryProjectSettings(boolean catberryEnabled, TemplateEngine templateEngine, String componentsRoot, String storesRoot) {
     this.catberryEnabled = catberryEnabled;
-    this.templateEngineName = templateEngineName;
+    this.templateEngine = templateEngine;
     this.componentsRoot = componentsRoot;
     this.storesRoot = storesRoot;
   }
@@ -32,13 +32,13 @@ public class CatberryProjectSettings implements CatberryReadWriteSettings {
   }
 
   @Override
-  public String getTemplateEngineName() {
-    return templateEngineName;
+  public TemplateEngine getTemplateEngine() {
+    return templateEngine;
   }
 
   @Override
-  public void setTemplateEngineName(String templateEngineName) {
-    this.templateEngineName = templateEngineName;
+  public void setTemplateEngine(TemplateEngine templateEngine) {
+    this.templateEngine = templateEngine;
   }
 
   @Override
@@ -65,6 +65,6 @@ public class CatberryProjectSettings implements CatberryReadWriteSettings {
     target.setCatberryEnabled(source.isCatberryEnabled());
     target.setComponentsRoot(source.getComponentsRoot());
     target.setStoresRoot(source.getStoresRoot());
-    target.setTemplateEngineName(source.getTemplateEngineName());
+    target.setTemplateEngine(source.getTemplateEngine());
   }
 }

@@ -8,7 +8,7 @@ package org.buffagon.intellij.catberry;
 public interface CatberryReadWriteSettings extends CatberryReadOnlySettings {
   void setCatberryEnabled(boolean catberryEnabled);
 
-  void setTemplateEngineName(String templateEngineName);
+  void setTemplateEngine(TemplateEngine templateEngine);
 
   void setComponentsRoot(String componentsRoot);
 
