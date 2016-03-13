@@ -68,18 +68,19 @@ public class CatberryComponentUtils {
           }
           if(!found)
             continue;
+          String logic = "./index.js";
           for (JsonProperty property : properties) {
             if (!property.getName().equals("logic"))
               continue;
-            if (property.getValue() != null && property.getValue() instanceof JsonStringLiteral) {
-              final String path = ((JsonStringLiteral) property.getValue()).getValue();
-              VirtualFile f = psiFile.getVirtualFile().getParent();
-              f = f.findFileByRelativePath(path);
-              if (f != null)
-                return PsiManager.getInstance(project).findFile(f);
-            }
-            return null;
+            if (property.getValue() != null && property.getValue() instanceof JsonStringLiteral)
+              logic = ((JsonStringLiteral) property.getValue()).getValue();
+            break;
           }
+          VirtualFile f = psiFile.getVirtualFile().getParent();
+          f = f.findFileByRelativePath(logic);
+          if (f != null)
+            return PsiManager.getInstance(project).findFile(f);
+          return null;
         }
       }
     }
