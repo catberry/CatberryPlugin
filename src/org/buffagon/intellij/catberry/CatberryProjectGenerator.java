@@ -7,6 +7,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.CatberryIcons;
 import org.jetbrains.annotations.Nls;
@@ -51,8 +52,7 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
           try {
             ProcessBuilder processBuilder = new ProcessBuilder();
 
-            final String os = System.getProperty("os.name").toLowerCase();
-            if(os.contains("win")) {
+            if(SystemInfo.isWindows) {
               processBuilder.command("catberry", "init", "--dest=" + baseDir.getPath(), "empty-" + templateEngine);
             } else {
               String env_path = System.getenv("PATH");
