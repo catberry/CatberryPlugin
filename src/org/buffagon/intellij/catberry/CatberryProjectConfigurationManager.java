@@ -5,12 +5,14 @@ import com.intellij.json.psi.JsonFile;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
@@ -69,49 +71,20 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
 
   private void updateTemplateEngine(final TemplateEngine templateEngine) {
     VirtualFile file = project.getBaseDir().findChild("package.json");
-    String oldTemplateLibrary = null;
-    final JsonElementGenerator jsonElementGenerator = new JsonElementGenerator(project);
+    final Set<String> engineTagNames = new HashSet<String>();
+    for (TemplateEngine engine : TemplateEngine.values()) {
+      engineTagNames.add("catberry-" + engine);
+    }
+
+
     if (file == null) {
       LOG.debug("package.json not found");
       return;
     }
     JsonFile jsonFile = (JsonFile) PsiManager.getInstance(project).findFile(file);
     if (jsonFile != null) {
-      Set<String> engineTagNames = new HashSet<String>();
-      for (TemplateEngine engine : TemplateEngine.values()) {
-        engineTagNames.add("catberry-" + engine);
-      }
-      List<JsonProperty> properties =
-          PsiTreeUtil.getChildrenOfTypeAsList(jsonFile.getTopLevelValue(), JsonProperty.class);
-      for (JsonProperty property : properties) {
-        if (!property.getName().equals("dependencies"))
-          continue;
-        final JsonObject propertyObject = (JsonObject) property.getValue();
-        if (propertyObject == null)
-          continue;
-        final List<JsonProperty> dependencies = PsiTreeUtil.getChildrenOfTypeAsList(propertyObject, JsonProperty.class);
-        for (final JsonProperty dependency : dependencies) {
-          if (!engineTagNames.contains(dependency.getName()))
-            continue;
-          if (!dependency.getName().equals("catberry-" + templateEngine)) {
-            oldTemplateLibrary = dependency.getName();
-            CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
-              @Override
-              public void run() {
-                dependency.setName("catberry-" + templateEngine);
-                if (dependency.getValue() != null)
-                  dependency.getValue().delete();
-                dependency.add(jsonElementGenerator.createStringLiteral(templateEngine.getVersion()));
-              }
-            });
-
-          }
-          break;
-        }
-      }
+      changeTemplateEngineInJsonConfig(templateEngine, engineTagNames, jsonFile);
     }
-    if (oldTemplateLibrary == null)
-      return;
 
     file = project.getBaseDir().findChild("server.js");
     if(file == null) {
@@ -120,43 +93,81 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
     }
 
     JSFile jsFile = (JSFile) PsiManager.getInstance(project).findFile(file);
-    if(jsFile != null) {
-      final List<JSVarStatement> varStatements = PsiTreeUtil.getChildrenOfTypeAsList(jsFile, JSVarStatement.class);
-      for(JSVarStatement varStatement : varStatements) {
-        final List<JSVariable> variables = PsiTreeUtil.getChildrenOfTypeAsList(varStatement, JSVariable.class);
-        for(JSVariable variable : variables) {
-          JSExpression expression = variable.getInitializer();
-          if(!(expression instanceof JSCallExpression))
-            continue;
-          JSCallExpression call = (JSCallExpression) expression;
-          JSReferenceExpression refExpr = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-          if(refExpr != null && "require".equals(refExpr.getReferenceName()) && refExpr.getQualifier() == null) {
-            call.getChildren();
-            JSExpression[] args = call.getArguments();
-            if(args.length != 1)
-              continue;
-            if(!(args[0] instanceof JSLiteralExpression))
-              continue;
-            JSLiteralExpression value = (JSLiteralExpression) args[0];
-            if(!oldTemplateLibrary.equals(value.getValue()))
-              continue;
-            // TODO: 13/03/16 not finished
-//            JSGeneratorExpression gen = JSUtils.
-          }
-        }
-      }
-//      jsFile.accept(new JSElementVisitor() {
-//        @Override
-//        public void visitJSCallExpression(JSCallExpression node) {
-//          super.visitJSCallExpression(node);
-//          JSReferenceExpression refExpr = ObjectUtils.tryCast(node.getMethodExpression(), JSReferenceExpression.class);
-//          if(refExpr != null && "require".equals(refExpr.getReferenceName()) && refExpr.getQualifier() == null) {
-//            node.getArguments()[0].getChildren();
-//          }
-//        }
-//      });
+    if(jsFile != null)
+      changeTemplateEngineInJsConfig(templateEngine, engineTagNames, jsFile);
+
+
+    file = project.getBaseDir().findChild("browser.js");
+    if(file == null) {
+      LOG.debug("browser.js not found");
+      return;
     }
 
+    jsFile = (JSFile) PsiManager.getInstance(project).findFile(file);
+    if(jsFile != null)
+      changeTemplateEngineInJsConfig(templateEngine, engineTagNames, jsFile);
+  }
+
+  private void changeTemplateEngineInJsonConfig(final TemplateEngine templateEngine, Set<String> engineTagNames, JsonFile jsonFile) {
+    final JsonElementGenerator jsonElementGenerator = new JsonElementGenerator(project);
+    List<JsonProperty> properties =
+        PsiTreeUtil.getChildrenOfTypeAsList(jsonFile.getTopLevelValue(), JsonProperty.class);
+    for (JsonProperty property : properties) {
+      if (!property.getName().equals("dependencies"))
+        continue;
+      final JsonObject propertyObject = (JsonObject) property.getValue();
+      if (propertyObject == null)
+        continue;
+      final List<JsonProperty> dependencies = PsiTreeUtil.getChildrenOfTypeAsList(propertyObject, JsonProperty.class);
+      for (final JsonProperty dependency : dependencies) {
+        if (!engineTagNames.contains(dependency.getName()))
+          continue;
+        if (!dependency.getName().equals("catberry-" + templateEngine)) {
+          CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
+            @Override
+            public void run() {
+              dependency.setName("catberry-" + templateEngine);
+              PsiElement newValue = jsonElementGenerator.createStringLiteral(templateEngine.getVersion());
+              if (dependency.getValue() != null)
+                dependency.getValue().replace(newValue);
+              else
+                dependency.add(newValue);
+            }
+          });
+
+        }
+        break;
+      }
+    }
+  }
+
+  private void changeTemplateEngineInJsConfig(final TemplateEngine templateEngine, final Set<String> engineTagNames, JSFile jsFile) {
+    // NOTE: iteration on JsVariables may be better
+    jsFile.acceptChildren(new JSRecursiveElementVisitor() {
+      @Override
+      public void visitJSCallExpression(JSCallExpression node) {
+        super.visitJSCallExpression(node);
+        JSReferenceExpression refExpr = ObjectUtils.tryCast(node.getMethodExpression(), JSReferenceExpression.class);
+        if(refExpr != null && "require".equals(refExpr.getReferenceName()) && refExpr.getQualifier() == null) {
+          JSExpression[] args = node.getArguments();
+
+          if(args.length != 1)
+            return;
+          if(!(args[0] instanceof JSLiteralExpression))
+            return;
+          final JSLiteralExpression value = (JSLiteralExpression) args[0];
+          //noinspection SuspiciousMethodCalls
+          if(!engineTagNames.contains(value.getValue()))
+            return;
+          CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
+            @Override
+            public void run() {
+              value.replace(JSChangeUtil.createExpressionFromText(project, "'catberry-" + templateEngine + "'").getPsi());
+            }
+          });
+        }
+      }
+    });
   }
 
   public static CatberryProjectConfigurationManager getInstance(Project project) {
