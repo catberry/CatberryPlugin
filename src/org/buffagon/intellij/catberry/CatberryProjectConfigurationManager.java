@@ -4,10 +4,7 @@ import com.intellij.json.psi.JsonElementGenerator;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
-import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSElementVisitor;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.ProjectComponent;
@@ -122,8 +119,32 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
       return;
     }
 
-//    JSFile jsFile = (JSFile) PsiManager.getInstance(project).findFile(file);
-//    if(jsFile != null) {
+    JSFile jsFile = (JSFile) PsiManager.getInstance(project).findFile(file);
+    if(jsFile != null) {
+      final List<JSVarStatement> varStatements = PsiTreeUtil.getChildrenOfTypeAsList(jsFile, JSVarStatement.class);
+      for(JSVarStatement varStatement : varStatements) {
+        final List<JSVariable> variables = PsiTreeUtil.getChildrenOfTypeAsList(varStatement, JSVariable.class);
+        for(JSVariable variable : variables) {
+          JSExpression expression = variable.getInitializer();
+          if(!(expression instanceof JSCallExpression))
+            continue;
+          JSCallExpression call = (JSCallExpression) expression;
+          JSReferenceExpression refExpr = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
+          if(refExpr != null && "require".equals(refExpr.getReferenceName()) && refExpr.getQualifier() == null) {
+            call.getChildren();
+            JSExpression[] args = call.getArguments();
+            if(args.length != 1)
+              continue;
+            if(!(args[0] instanceof JSLiteralExpression))
+              continue;
+            JSLiteralExpression value = (JSLiteralExpression) args[0];
+            if(!oldTemplateLibrary.equals(value.getValue()))
+              continue;
+            // TODO: 13/03/16 not finished
+//            JSGeneratorExpression gen = JSUtils.
+          }
+        }
+      }
 //      jsFile.accept(new JSElementVisitor() {
 //        @Override
 //        public void visitJSCallExpression(JSCallExpression node) {
@@ -134,7 +155,7 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
 //          }
 //        }
 //      });
-//    }
+    }
 
   }
 
