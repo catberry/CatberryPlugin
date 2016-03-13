@@ -3,8 +3,10 @@ package org.buffagon.intellij.catberry;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
@@ -13,6 +15,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,22 +30,59 @@ public class CatberryComponentUtils {
     Map<String, PsiFile> result = new HashMap<String, PsiFile>();
     Collection<VirtualFile> virtualFiles =
         FileBasedIndex.getInstance().getContainingFiles(FilenameIndex.NAME, CatberryConstants.CAT_COMPONENT_JSON,
-        GlobalSearchScope.allScope(project));
+            GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
       JsonFile psiFile = (JsonFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (psiFile != null) {
         JsonProperty[] properties = PsiTreeUtil.getChildrenOfType(psiFile.getTopLevelValue(), JsonProperty.class);
         if (properties != null) {
-          for(JsonProperty property : properties) {
-            if(!property.getName().equals("name"))
+          for (JsonProperty property : properties) {
+            if (!property.getName().equals("name"))
               continue;
-            if(property.getValue() != null && property.getValue() instanceof JsonStringLiteral)
-              result.put(((JsonStringLiteral)property.getValue()).getValue(), psiFile);
+            if (property.getValue() != null && property.getValue() instanceof JsonStringLiteral)
+              result.put(((JsonStringLiteral) property.getValue()).getValue(), psiFile);
             break;
           }
         }
       }
     }
     return result;
+  }
+
+  public static PsiFile findComponent(@NotNull final Project project, @NotNull final String name) {
+    Collection<VirtualFile> virtualFiles =
+        FileBasedIndex.getInstance().getContainingFiles(FilenameIndex.NAME, CatberryConstants.CAT_COMPONENT_JSON,
+            GlobalSearchScope.allScope(project));
+    for (VirtualFile virtualFile : virtualFiles) {
+      JsonFile psiFile = (JsonFile) PsiManager.getInstance(project).findFile(virtualFile);
+      if (psiFile != null) {
+        JsonProperty[] properties = PsiTreeUtil.getChildrenOfType(psiFile.getTopLevelValue(), JsonProperty.class);
+        if (properties != null) {
+          boolean found = false;
+          for (JsonProperty property : properties) {
+            if (!property.getName().equals("name"))
+              continue;
+            if (property.getValue() != null && property.getValue() instanceof JsonStringLiteral)
+              found = name.equals(((JsonStringLiteral) property.getValue()).getValue());
+            break;
+          }
+          if(!found)
+            continue;
+          for (JsonProperty property : properties) {
+            if (!property.getName().equals("logic"))
+              continue;
+            if (property.getValue() != null && property.getValue() instanceof JsonStringLiteral) {
+              final String path = ((JsonStringLiteral) property.getValue()).getValue();
+              VirtualFile f = psiFile.getVirtualFile().getParent();
+              f = f.findFileByRelativePath(path);
+              if (f != null)
+                return PsiManager.getInstance(project).findFile(f);
+            }
+            return null;
+          }
+        }
+      }
+    }
+    return null;
   }
 }

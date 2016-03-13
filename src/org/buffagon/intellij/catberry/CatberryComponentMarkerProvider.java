@@ -3,6 +3,7 @@ package org.buffagon.intellij.catberry;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -25,11 +26,11 @@ public class CatberryComponentMarkerProvider extends RelatedItemLineMarkerProvid
       if (name.startsWith("cat-"))
         name = name.substring(4);
       Project project = element.getProject();
-      Map<String, PsiFile> map = CatberryComponentUtils.findComponents(project);
-      PsiFile file = map.get(name);
+      PsiFile file =  CatberryComponentUtils.findComponent(project, name);
       if (file != null) {
         NavigationGutterIconBuilder<PsiElement> builder =
-            NavigationGutterIconBuilder.create(CatberryIcons.LOGO_16).setTarget(file).setTooltipText("Navigate to a component");
+            NavigationGutterIconBuilder.create(AllIcons.General.OverridenMethod).setTarget(file).setTooltipText(
+                CatberryBundle.message("navigate.to.component"));
         result.add(builder.createLineMarkerInfo(element));
       }
     }
