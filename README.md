@@ -15,3 +15,4 @@ Intellij platform plugin for Catberry JS framework
 	* Catberry JS (for WebStorm)
 * Open any catberry project (for existing projects):
 	* Check plugin settings (template engine, components and stores dirs)
+* If you use dust templates, associate \*.dust files with HTML FileType

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.html.HtmlTag;
+import com.intellij.psi.xml.XmlTag;
 import icons.CatberryIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,11 +21,15 @@ import java.util.Map;
 public class CatberryComponentMarkerProvider extends RelatedItemLineMarkerProvider {
   @Override
   protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
-    if (element instanceof HtmlTag) {
-      HtmlTag htmlTag = (HtmlTag) element;
-      String name = htmlTag.getName();
-      if (name.startsWith("cat-"))
+    if (element instanceof XmlTag) {
+      XmlTag tag = (XmlTag) element;
+      String name = tag.getName();
+      if(!CatberryConstants.COMPONENTS_TAGS.contains(name)) {
+        if(!name.startsWith("cat-"))
+          return;
         name = name.substring(4);
+      }
+
       Project project = element.getProject();
       PsiFile file =  CatberryComponentUtils.findComponent(project, name);
       if (file != null) {

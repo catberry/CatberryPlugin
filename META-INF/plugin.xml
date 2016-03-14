@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.buffagon.intellij.catberry</id>
   <name>Catberry Framework support</name>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Alex Prokofiev</vendor>
 
   <description><![CDATA[
@@ -9,8 +9,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
-    Auto change config files on change template engine.
-    Add navigation to components from handlebars templates.
+    Add navigation to components from Dust and Jade templates.
     ]]>
   </change-notes>
 
@@ -31,6 +30,7 @@
     <projectTemplatesFactory implementation="org.buffagon.intellij.catberry.CatberryProjectTemplateFactory"/>
 
     <codeInsight.lineMarkerProvider language="HTML" implementationClass="org.buffagon.intellij.catberry.CatberryComponentMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="Jade" implementationClass="org.buffagon.intellij.catberry.CatberryComponentMarkerProvider"/>
 
     <psi.referenceContributor implementation="org.buffagon.intellij.catberry.CatberryComponentReferenceContributor"/>
   </extensions>
