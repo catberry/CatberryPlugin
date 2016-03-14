@@ -1,0 +1,12 @@
+[submodule "res/templates/new_project/handlebars"]
+	path = res/templates/new_project/handlebars
+	url = https://github.com/catberry/catberry-hello-world-handlebars.git
+[submodule "res/templates/new_project/jade"]
+	path = res/templates/new_project/jade
+	url = https://github.com/catberry/catberry-hello-world-jade.git
+[submodule "res/templates/new_project/dust"]
+	path = res/templates/new_project/dust
+	url = https://github.com/catberry/catberry-hello-world-dust.git
+[submodule "res/templates/module_presets"]
+	path = res/templates/module_presets
+	url = https://github.com/catberry/catberry-module-presets.git

@@ -1,5 +1,8 @@
 package org.buffagon.intellij.catberry;
 
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +17,13 @@ public final class CatberryConstants {
   public static final String CATBERRY_COMPONENTS = "catberry_components";
   public static final String CATBERRY_STORES = "catberry_stores";
   public static final Set<String> COMPONENTS_TAGS = new HashSet<String>();
+  public static final String TEMPLATE_PASCAL_NAME = "__pascalName__";
+
 
   static {
     COMPONENTS_TAGS.addAll(Arrays.asList("head"));
   }
 
+  public static final NotificationGroup CATBERRY_NOTIFICATION_GROUP =
+      new NotificationGroup("My notification group", NotificationDisplayType.BALLOON, true);
 }
