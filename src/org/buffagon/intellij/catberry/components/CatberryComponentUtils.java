@@ -3,13 +3,10 @@ package org.buffagon.intellij.catberry.components;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -18,9 +15,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,7 +64,7 @@ public class CatberryComponentUtils {
           }
           if(!found)
             continue;
-          String logic = "./index.js";
+          String logic = CatberryConstants.DEFAULT_COMPONENT_JS;
           for (JsonProperty property : properties) {
             if (!property.getName().equals("logic"))
               continue;
