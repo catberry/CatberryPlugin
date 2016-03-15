@@ -24,16 +24,16 @@
   <depends>JavaScript</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <projectConfigurable instance="org.buffagon.intellij.catberry.CatberryProjectSettingsConfigurable"/>
+    <projectConfigurable instance="org.buffagon.intellij.catberry.settings.CatberryProjectSettingsConfigurable"/>
 
-    <directoryProjectGenerator implementation="org.buffagon.intellij.catberry.CatberryProjectGenerator"/>
-    <projectTemplatesFactory implementation="org.buffagon.intellij.catberry.CatberryProjectTemplateFactory"/>
+    <directoryProjectGenerator implementation="org.buffagon.intellij.catberry.project.CatberryProjectGenerator"/>
+    <projectTemplatesFactory implementation="org.buffagon.intellij.catberry.project.CatberryProjectTemplateFactory"/>
 
-    <codeInsight.lineMarkerProvider language="HTML" implementationClass="org.buffagon.intellij.catberry.CatberryComponentMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="HTML" implementationClass="org.buffagon.intellij.catberry.components.CatberryComponentMarkerProvider"/>
     <!--suppress PluginXmlValidity -->
-    <codeInsight.lineMarkerProvider language="Jade" implementationClass="org.buffagon.intellij.catberry.CatberryComponentMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="Jade" implementationClass="org.buffagon.intellij.catberry.components.CatberryComponentMarkerProvider"/>
 
-    <psi.referenceContributor implementation="org.buffagon.intellij.catberry.CatberryComponentReferenceContributor"/>
+    <psi.referenceContributor implementation="org.buffagon.intellij.catberry.components.CatberryComponentReferenceContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -63,11 +63,11 @@
 
   <project-components>
     <component>
-      <implementation-class>org.buffagon.intellij.catberry.CatberryProjectSettingsProvider</implementation-class>
-      <interface-class>org.buffagon.intellij.catberry.CatberryProjectSettingsProvider</interface-class>
+      <implementation-class>org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider</implementation-class>
+      <interface-class>org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider</interface-class>
     </component>
     <component>
-      <implementation-class>org.buffagon.intellij.catberry.CatberryProjectConfigurationManager
+      <implementation-class>org.buffagon.intellij.catberry.settings.CatberryProjectConfigurationManager
       </implementation-class>
     </component>
   </project-components>

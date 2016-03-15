@@ -1,8 +1,7 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.components;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.html.HtmlTag;

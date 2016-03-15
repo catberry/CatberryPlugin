@@ -13,14 +13,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
-import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
+import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
 import org.buffagon.intellij.catberry.StringUtils;
 import org.jetbrains.annotations.NotNull;
 

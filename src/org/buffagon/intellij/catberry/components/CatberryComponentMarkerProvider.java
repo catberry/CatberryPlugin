@@ -1,4 +1,4 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.components;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -7,13 +7,12 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.xml.XmlTag;
-import icons.CatberryIcons;
+import org.buffagon.intellij.catberry.CatberryBundle;
+import org.buffagon.intellij.catberry.CatberryConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author Prokofiev Alex

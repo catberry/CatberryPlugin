@@ -1,4 +1,4 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.settings;
 
 import com.intellij.json.psi.JsonElementGenerator;
 import com.intellij.json.psi.JsonFile;
@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
+import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

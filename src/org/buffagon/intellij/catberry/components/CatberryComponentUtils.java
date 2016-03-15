@@ -1,4 +1,4 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.components;
 
 import com.intellij.json.psi.JsonFile;
 import com.intellij.json.psi.JsonProperty;
@@ -15,6 +15,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.buffagon.intellij.catberry.CatberryConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

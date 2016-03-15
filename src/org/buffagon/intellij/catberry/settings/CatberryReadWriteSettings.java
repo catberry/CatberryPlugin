@@ -1,4 +1,6 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.settings;
+
+import org.buffagon.intellij.catberry.TemplateEngine;
 
 /**
  * === Описание класса ===

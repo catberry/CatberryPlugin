@@ -1,7 +1,8 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.settings;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.ui.CollectionComboBoxModel;
+import org.buffagon.intellij.catberry.TemplateEngine;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

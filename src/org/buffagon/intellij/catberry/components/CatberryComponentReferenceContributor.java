@@ -1,9 +1,8 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.components;
 
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.html.HtmlTag;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 

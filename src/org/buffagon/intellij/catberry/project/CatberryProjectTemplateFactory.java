@@ -1,4 +1,4 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.project;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.module.WebModuleBuilder;

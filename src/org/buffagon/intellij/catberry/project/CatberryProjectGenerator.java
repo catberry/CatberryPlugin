@@ -1,4 +1,4 @@
-package org.buffagon.intellij.catberry;
+package org.buffagon.intellij.catberry.project;
 
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.openapi.application.ApplicationManager;
@@ -10,6 +10,11 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.CatberryIcons;
+import org.buffagon.intellij.catberry.CatberryBundle;
+import org.buffagon.intellij.catberry.TemplateEngine;
+import org.buffagon.intellij.catberry.settings.CatberryProjectSettings;
+import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
+import org.buffagon.intellij.catberry.settings.CatberryReadOnlySettings;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 

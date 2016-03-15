@@ -19,16 +19,14 @@ import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
-import org.buffagon.intellij.catberry.CatberryProjectSettingsProvider;
+import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 
