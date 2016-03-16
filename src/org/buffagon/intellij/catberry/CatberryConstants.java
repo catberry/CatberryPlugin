@@ -18,6 +18,7 @@ public final class CatberryConstants {
   public static final String CATBERRY_STORES = "catberry_stores";
   public static final Set<String> COMPONENTS_TAGS = new HashSet<String>();
   public static final String TEMPLATE_PASCAL_NAME = "__pascalName__";
+  public static final String TEMPLATE_NAME = "__name__";
 
 
   static {

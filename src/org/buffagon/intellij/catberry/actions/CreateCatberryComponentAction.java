@@ -19,13 +19,12 @@ import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
+import org.buffagon.intellij.catberry.StringUtils;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.Enumeration;
@@ -95,10 +94,20 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
       while(resources.hasMoreElements()) {
         URI uri = resources.nextElement().toURI();
         String relative = uri.relativize(baseDir.toURI()).getPath();
-        //todo:
+        File currentFile = new File(path + File.separator + uri.getPath());
+
 
         InputStream in = new FileInputStream(new File(uri));
 
+        BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile));
+        BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
+        String buf;
+        while ((buf = rdr.readLine()) != null) {
+          buf = buf.replace(CatberryConstants.TEMPLATE_NAME, name);
+          writer.write(buf.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, StringUtils.toCamelCase(name, "-")));
+          writer.newLine();
+        }
+        writer.close();
         in.close();
       }
     } catch (Exception e) {
