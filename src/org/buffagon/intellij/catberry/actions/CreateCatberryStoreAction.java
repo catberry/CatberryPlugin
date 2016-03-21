@@ -17,13 +17,12 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
-import org.buffagon.intellij.catberry.CatberryBundle;
-import org.buffagon.intellij.catberry.CatberryConstants;
+import org.buffagon.intellij.catberry.*;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
-import org.buffagon.intellij.catberry.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Action for create new Catberry store.
@@ -64,9 +63,10 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
 
   private boolean createCatberryStore(@NotNull final String path, @NotNull final String name,
                                       @NotNull final Project project) {
-    InputStream in = getClass().getClassLoader().getResourceAsStream("templates/module_presets/Store.js");
+
     try {
-      File f = new File(path + File.separator + name + ".js");
+      final String targetPath = path + File.separator + name + ".js";
+      File f = new File(targetPath);
       if (f.exists()) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
           @Override
@@ -78,15 +78,13 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
         });
         return false;
       }
-      BufferedWriter writer = new BufferedWriter(new FileWriter(f));
-      BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
-      String buf;
-      while ((buf = rdr.readLine()) != null) {
-        writer.write(buf.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, name));
-        writer.newLine();
-      }
-      writer.close();
-      in.close();
+      Processor<String, String> processor = new Processor<String, String>() {
+        @Override
+        public String process(String value) {
+          return value.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, name);
+        }
+      };
+      ResourcesUtil.copyResource("templates/module_presets/Store.js", targetPath, processor);
     } catch (IOException e) {
       LOG.error(e);
       return false;

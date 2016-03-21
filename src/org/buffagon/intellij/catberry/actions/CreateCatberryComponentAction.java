@@ -17,17 +17,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
-import org.buffagon.intellij.catberry.CatberryBundle;
-import org.buffagon.intellij.catberry.CatberryConstants;
-import org.buffagon.intellij.catberry.StringUtil;
+import org.buffagon.intellij.catberry.*;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
-import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.Stack;
+import java.io.File;
 
 /**
  * Action for create new Catberry component.
@@ -88,35 +82,17 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
         });
         return false;
       }
-      f.mkdirs();
-      Enumeration<URL> resources =
-          getClass().getClassLoader().getResources("templates/module_presets/component-" + templateEngine + "/");
-      File rootDir = new File(resources.nextElement().toURI());
-      Stack<File> stack = new Stack<File>();
-      stack.add(rootDir);
-      while (!stack.isEmpty()) {
-        File parent = stack.pop();
-        for(File child : parent.listFiles()) {
-          String relative = rootDir.toURI().relativize(child.toURI()).getPath();
-          File currentFile = new File(targetPath+File.separator+relative);
-          if(child.isFile()) {
-            InputStream in = new FileInputStream(child);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile));
-            BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
-            String buf;
-            while ((buf = rdr.readLine()) != null) {
-              buf = buf.replace(CatberryConstants.TEMPLATE_NAME, name);
-              writer.write(buf.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, StringUtil.toCamelCase(name, "-")));
-              writer.newLine();
-            }
-            writer.close();
-            in.close();
-          } else {
-            currentFile.mkdirs();
-            stack.add(child);
-          }
+      final String camelCaseName = StringUtil.toCamelCase(name, "-");
+      final String resourcesDir = "templates/module_presets/component-" + templateEngine + "/";
+      final Processor<String, String> processor = new Processor<String, String>() {
+        @Override
+        public String process(String value) {
+          value = value.replace(CatberryConstants.TEMPLATE_NAME, name);
+          return value.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, camelCaseName);
         }
-      }
+      };
+
+      ResourcesUtil.copyResourcesDir(resourcesDir, targetPath, processor);
     } catch (Exception e) {
       LOG.error(e);
       return false;

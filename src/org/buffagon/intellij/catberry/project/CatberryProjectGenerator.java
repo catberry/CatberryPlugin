@@ -7,10 +7,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
+import org.buffagon.intellij.catberry.ResourcesUtil;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettings;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * @author Prokofiev Alex
@@ -55,30 +56,10 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
               ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
           final TemplateEngine templateEngine = data.getTemplateEngine();
           try {
-            ProcessBuilder processBuilder = new ProcessBuilder();
-
-            if(SystemInfo.isWindows) {
-              processBuilder.command("catberry", "init", "--dest=" + baseDir.getPath(), "empty-" + templateEngine);
-            } else {
-              String env_path = System.getenv("PATH");
-              if(!env_path.contains("/bin"))
-                env_path = "/bin:" + env_path;
-
-              if(!env_path.contains("/usr/bin"))
-                env_path = "/usr/bin:" + env_path;
-
-              if(!env_path.contains("/usr/local/bin"))
-                env_path = "/usr/local/bin:" + env_path;
-
-              final String command = "catberry init --dest=" + baseDir.getPath() + " empty-" + templateEngine;
-              processBuilder.command("sh", "-c", "export PATH=" + env_path + "&& " + command);
-            }
-
-            Process process = processBuilder.start();
-            process.waitFor();
+            ResourcesUtil.copyResourcesDir("templates/new_project/"+templateEngine, baseDir.getPath(), null);
           } catch (IOException e) {
             LOG.error(e);
-          } catch (InterruptedException e) {
+          } catch (URISyntaxException e) {
             LOG.error(e);
           }
 
