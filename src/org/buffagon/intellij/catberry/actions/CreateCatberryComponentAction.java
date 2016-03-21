@@ -19,15 +19,15 @@ import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
-import org.buffagon.intellij.catberry.StringUtils;
+import org.buffagon.intellij.catberry.StringUtil;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.net.URI;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Stack;
 
 /**
  * Action for create new Catberry component.
@@ -75,9 +75,8 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
                                                 @NotNull final TemplateEngine templateEngine,
                                                 @NotNull final Project project) {
     try {
-      Enumeration<URL> resources =
-          getClass().getClassLoader().getResources("templates/module_presets/component-" + templateEngine + "/*");
-      File f = new File(path + File.separator + name);
+      final String targetPath = path + File.separator + name;
+      File f = new File(targetPath);
       if (f.exists()) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
           @Override
@@ -89,26 +88,34 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
         });
         return false;
       }
-      final File baseDir = new File(path);
-
-      while(resources.hasMoreElements()) {
-        URI uri = resources.nextElement().toURI();
-        String relative = uri.relativize(baseDir.toURI()).getPath();
-        File currentFile = new File(path + File.separator + uri.getPath());
-
-
-        InputStream in = new FileInputStream(new File(uri));
-
-        BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile));
-        BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
-        String buf;
-        while ((buf = rdr.readLine()) != null) {
-          buf = buf.replace(CatberryConstants.TEMPLATE_NAME, name);
-          writer.write(buf.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, StringUtils.toCamelCase(name, "-")));
-          writer.newLine();
+      f.mkdirs();
+      Enumeration<URL> resources =
+          getClass().getClassLoader().getResources("templates/module_presets/component-" + templateEngine + "/");
+      File rootDir = new File(resources.nextElement().toURI());
+      Stack<File> stack = new Stack<File>();
+      stack.add(rootDir);
+      while (!stack.isEmpty()) {
+        File parent = stack.pop();
+        for(File child : parent.listFiles()) {
+          String relative = rootDir.toURI().relativize(child.toURI()).getPath();
+          File currentFile = new File(targetPath+File.separator+relative);
+          if(child.isFile()) {
+            InputStream in = new FileInputStream(child);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile));
+            BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
+            String buf;
+            while ((buf = rdr.readLine()) != null) {
+              buf = buf.replace(CatberryConstants.TEMPLATE_NAME, name);
+              writer.write(buf.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, StringUtil.toCamelCase(name, "-")));
+              writer.newLine();
+            }
+            writer.close();
+            in.close();
+          } else {
+            currentFile.mkdirs();
+            stack.add(child);
+          }
         }
-        writer.close();
-        in.close();
       }
     } catch (Exception e) {
       LOG.error(e);

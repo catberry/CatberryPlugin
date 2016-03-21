@@ -3,7 +3,7 @@ package org.buffagon.intellij.catberry;
 /**
  * @author Prokofiev Alex
  */
-public class StringUtils {
+public final class StringUtil {
   public static String toCamelCase(String value, String separator)
   {
     StringBuilder sb = new StringBuilder();

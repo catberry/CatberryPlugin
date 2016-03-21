@@ -20,7 +20,7 @@ import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
-import org.buffagon.intellij.catberry.StringUtils;
+import org.buffagon.intellij.catberry.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -48,7 +48,7 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
         CatberryBundle.message("new.cat.store"), CatberryIcons.LOGO_16, "Store", null);
     if (name == null)
       return;
-    name = StringUtils.toCamelCase(name, "-");
+    name = StringUtil.toCamelCase(name, "-");
     final String path = directory.getVirtualFile().getPath();
 
     if (!createCatberryStore(path, name, e.getProject()))
