@@ -18,7 +18,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.*;
-import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
+import org.buffagon.intellij.catberry.settings.CatberryProjectConfigurationManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -106,12 +106,12 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
     if (project == null || ideView == null)
       return false;
 
-    CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
-    if (!settingsProvider.isCatberryEnabled())
+    CatberryProjectConfigurationManager configurationManager = CatberryProjectConfigurationManager.getInstance(project);
+    if (!configurationManager.isCatberryEnabled())
       return false;
 
     final PsiDirectory[] directories = ideView.getDirectories();
     return (directories.length == 1 &&
-        directories[0].getVirtualFile().getPath().contains(settingsProvider.getStoresRoot()));
+        directories[0].getVirtualFile().getPath().contains(configurationManager.getStoresRoot()));
   }
 }

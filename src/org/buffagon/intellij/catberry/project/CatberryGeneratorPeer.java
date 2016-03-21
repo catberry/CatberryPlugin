@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.platform.WebProjectGenerator;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettings;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsPanel;
-import org.buffagon.intellij.catberry.settings.CatberryReadOnlySettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,13 +15,12 @@ import javax.swing.*;
  *
  * @author Прокофьев Алексей
  */
-public class CatberryGeneratorPeer implements WebProjectGenerator.GeneratorPeer<CatberryReadOnlySettings> {
+public class CatberryGeneratorPeer implements WebProjectGenerator.GeneratorPeer<CatberryProjectSettings> {
   private CatberryProjectSettings settings;
   private CatberryProjectSettingsPanel panel;
 
   public CatberryGeneratorPeer() {
     settings = new CatberryProjectSettings();
-    settings.setCatberryEnabled(true);
     panel = new CatberryProjectSettingsPanel(settings);
     panel.reset();
   }
@@ -30,17 +28,17 @@ public class CatberryGeneratorPeer implements WebProjectGenerator.GeneratorPeer<
   @NotNull
   @Override
   public JComponent getComponent() {
-    return panel.getBasePanel();
+    return panel.getRootPanel();
   }
 
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
-    settingsStep.addSettingsComponent(panel.getBasePanel());
+    settingsStep.addSettingsComponent(panel.getRootPanel());
   }
 
   @NotNull
   @Override
-  public CatberryReadOnlySettings getSettings() {
+  public CatberryProjectSettings getSettings() {
     panel.apply();
     return settings;
   }

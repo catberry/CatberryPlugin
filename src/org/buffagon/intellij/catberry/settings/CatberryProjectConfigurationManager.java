@@ -60,15 +60,26 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
     return "CatberryProjectConfigurationManager";
   }
 
-  public void updateConfiguration() {
-    final CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        updateTemplateEngine(settingsProvider.getTemplateEngine());
-      }
-    });
+  public boolean isCatberryEnabled() {
+    //// TODO: 21/03/16 calc value from config files
+    return true;
   }
+
+  public String getComponentsRoot() {
+    //// TODO: 21/03/16 calc value from config files
+    return "catberry_components";
+  }
+
+  public TemplateEngine getTemplateEngine() {
+    //// TODO: 21/03/16 calc value from config files
+    return TemplateEngine.HANDLEBARS;
+  }
+
+  public String getStoresRoot() {
+    //// TODO: 21/03/16 calc value from config files
+    return "catberry_stores";
+  }
+
 
   private void updateTemplateEngine(final TemplateEngine templateEngine) {
     VirtualFile file = project.getBaseDir().findChild("package.json");
@@ -174,4 +185,6 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
   public static CatberryProjectConfigurationManager getInstance(Project project) {
     return project.getComponent(CatberryProjectConfigurationManager.class);
   }
+
+
 }

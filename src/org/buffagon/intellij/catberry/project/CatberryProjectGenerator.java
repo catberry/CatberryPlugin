@@ -13,8 +13,6 @@ import org.buffagon.intellij.catberry.CatberryBundle;
 import org.buffagon.intellij.catberry.ResourcesUtil;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettings;
-import org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider;
-import org.buffagon.intellij.catberry.settings.CatberryReadOnlySettings;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +23,7 @@ import java.net.URISyntaxException;
 /**
  * @author Prokofiev Alex
  */
-public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnlySettings>
+public class CatberryProjectGenerator extends WebProjectTemplate<CatberryProjectSettings>
     implements Comparable<CatberryProjectGenerator>{
   public static final Logger LOG = Logger.getInstance(CatberryProjectGenerator.class.getName());
 
@@ -48,23 +46,20 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
 
   @Override
   public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
-                              @NotNull final CatberryReadOnlySettings data, @NotNull final Module module) {
+                              @NotNull final CatberryProjectSettings data, @NotNull final Module module) {
     ApplicationManager.getApplication().runWriteAction(
       new Runnable() {
         public void run() {
           final ModifiableRootModel modifiableModel =
               ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
-          final TemplateEngine templateEngine = data.getTemplateEngine();
+
           try {
-            ResourcesUtil.copyResourcesDir("templates/new_project/"+templateEngine, baseDir.getPath(), null);
+            ResourcesUtil.copyResourcesDir("templates/new_project/"+data.templateEngine, baseDir.getPath(), null);
           } catch (IOException e) {
             LOG.error(e);
           } catch (URISyntaxException e) {
             LOG.error(e);
           }
-
-          CatberryProjectSettingsProvider settingsProvider = CatberryProjectSettingsProvider.getInstance(project);
-          CatberryProjectSettings.copy(data, settingsProvider);
 
           ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel);
         }
@@ -74,7 +69,7 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryReadOnl
 
   @NotNull
   @Override
-  public GeneratorPeer<CatberryReadOnlySettings> createPeer() {
+  public GeneratorPeer<CatberryProjectSettings> createPeer() {
     return new CatberryGeneratorPeer();
   }
 
