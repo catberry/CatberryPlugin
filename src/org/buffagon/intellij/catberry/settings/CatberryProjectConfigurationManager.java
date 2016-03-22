@@ -1,27 +1,25 @@
 package org.buffagon.intellij.catberry.settings;
 
-import com.intellij.json.psi.JsonElementGenerator;
-import com.intellij.json.psi.JsonFile;
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
+import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
 import com.intellij.util.ObjectUtils;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Prokofiev Alex
@@ -61,8 +59,44 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
   }
 
   public boolean isCatberryEnabled() {
-    //// TODO: 21/03/16 calc value from config files
-    return true;
+    return getCatberryVersion() != null;
+  }
+
+  @Nullable
+  private String getCatberryVersion() {
+    final VirtualFile vf = project.getBaseDir().findChild("package.json");
+    if (vf == null)
+      return null;
+    final JsonFile file = (JsonFile) PsiManager.getInstance(project).findFile(vf);
+    if (file == null)
+      return null;
+    return CachedValuesManager.getCachedValue(file, new CachedValueProvider<String>() {
+      @Nullable
+      @Override
+      public Result<String> compute() {
+        List<JsonProperty> properties = PsiTreeUtil.getChildrenOfTypeAsList(file.getTopLevelValue(), JsonProperty.class);
+        String value = null;
+        for (JsonProperty property : properties) {
+          if (!property.getName().equals("dependencies"))
+            continue;
+          final JsonObject propertyObject = (JsonObject) property.getValue();
+          if (propertyObject == null)
+            continue;
+          final List<JsonProperty> dependencies = PsiTreeUtil.getChildrenOfTypeAsList(propertyObject, JsonProperty.class);
+          for (final JsonProperty dependency : dependencies) {
+            if (!"catberry".equals(dependency.getName()))
+              continue;
+            JsonValue jsonValue = dependency.getValue();
+            if(jsonValue != null) {
+              value = jsonValue.getText();
+            }
+            break;
+          }
+        }
+        //// TODO: 22/03/16 add package.json modification tracker
+        return Result.create(value, PsiModificationTracker.MODIFICATION_COUNT);
+      }
+    });
   }
 
   public String getComponentsRoot() {
@@ -99,24 +133,24 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
     }
 
     file = project.getBaseDir().findChild("server.js");
-    if(file == null) {
+    if (file == null) {
       LOG.debug("server.js not found");
       return;
     }
 
     JSFile jsFile = (JSFile) PsiManager.getInstance(project).findFile(file);
-    if(jsFile != null)
+    if (jsFile != null)
       changeTemplateEngineInJsConfig(templateEngine, engineTagNames, jsFile);
 
 
     file = project.getBaseDir().findChild("browser.js");
-    if(file == null) {
+    if (file == null) {
       LOG.debug("browser.js not found");
       return;
     }
 
     jsFile = (JSFile) PsiManager.getInstance(project).findFile(file);
-    if(jsFile != null)
+    if (jsFile != null)
       changeTemplateEngineInJsConfig(templateEngine, engineTagNames, jsFile);
   }
 
@@ -160,16 +194,16 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
       public void visitJSCallExpression(JSCallExpression node) {
         super.visitJSCallExpression(node);
         JSReferenceExpression refExpr = ObjectUtils.tryCast(node.getMethodExpression(), JSReferenceExpression.class);
-        if(refExpr != null && "require".equals(refExpr.getReferenceName()) && refExpr.getQualifier() == null) {
+        if (refExpr != null && "require".equals(refExpr.getReferenceName()) && refExpr.getQualifier() == null) {
           JSExpression[] args = node.getArguments();
 
-          if(args.length != 1)
+          if (args.length != 1)
             return;
-          if(!(args[0] instanceof JSLiteralExpression))
+          if (!(args[0] instanceof JSLiteralExpression))
             return;
           final JSLiteralExpression value = (JSLiteralExpression) args[0];
           //noinspection SuspiciousMethodCalls
-          if(!engineTagNames.contains(value.getValue()))
+          if (!engineTagNames.contains(value.getValue()))
             return;
           CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
