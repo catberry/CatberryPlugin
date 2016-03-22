@@ -24,8 +24,6 @@
   <depends>JavaScript</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <projectConfigurable instance="org.buffagon.intellij.catberry.settings.CatberryProjectSettingsConfigurable"/>
-
     <directoryProjectGenerator implementation="org.buffagon.intellij.catberry.project.CatberryProjectGenerator"/>
     <projectTemplatesFactory implementation="org.buffagon.intellij.catberry.project.CatberryProjectTemplateFactory"/>
 
@@ -62,10 +60,6 @@
   </actions>
 
   <project-components>
-    <component>
-      <implementation-class>org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider</implementation-class>
-      <interface-class>org.buffagon.intellij.catberry.settings.CatberryProjectSettingsProvider</interface-class>
-    </component>
     <component>
       <implementation-class>org.buffagon.intellij.catberry.settings.CatberryProjectConfigurationManager
       </implementation-class>

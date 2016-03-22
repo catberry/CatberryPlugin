@@ -1,5 +1,6 @@
 package org.buffagon.intellij.catberry.settings;
 
+import com.intellij.ProjectTopics;
 import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
@@ -8,13 +9,17 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.roots.ModuleRootAdapter;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.util.*;
+import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.*;
 import com.intellij.util.ObjectUtils;
+import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.TemplateEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,8 +29,10 @@ import java.util.*;
 /**
  * @author Prokofiev Alex
  */
+@SuppressWarnings("Duplicates")
 public class CatberryProjectConfigurationManager implements ProjectComponent {
-  public static final Logger LOG = Logger.getInstance(CatberryProjectConfigurationManager.class.getName());
+  private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("catberry.js.tracker");
+  private static final Logger LOG = Logger.getInstance(CatberryProjectConfigurationManager.class.getName());
   private Project project;
 
   public CatberryProjectConfigurationManager(Project project) {
@@ -64,18 +71,22 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
 
   @Nullable
   private String getCatberryVersion() {
-    final VirtualFile vf = project.getBaseDir().findChild("package.json");
-    if (vf == null)
+    if (DumbService.isDumb(project))
       return null;
-    final JsonFile file = (JsonFile) PsiManager.getInstance(project).findFile(vf);
-    if (file == null)
-      return null;
-    return CachedValuesManager.getCachedValue(file, new CachedValueProvider<String>() {
+
+    final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();;
+    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<String>() {
       @Nullable
       @Override
       public Result<String> compute() {
+        VirtualFile vf = project.getBaseDir().findChild("package.json");
+        if (vf == null)
+          return Result.create(null, tracker.getValue());
+        final JsonFile file = (JsonFile) PsiManager.getInstance(project).findFile(vf);
+        if (file == null)
+          return Result.create(null, tracker.getValue());
         List<JsonProperty> properties = PsiTreeUtil.getChildrenOfTypeAsList(file.getTopLevelValue(), JsonProperty.class);
-        String value = null;
+        JsonValue value = null;
         for (JsonProperty property : properties) {
           if (!property.getName().equals("dependencies"))
             continue;
@@ -86,22 +97,71 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
           for (final JsonProperty dependency : dependencies) {
             if (!"catberry".equals(dependency.getName()))
               continue;
-            JsonValue jsonValue = dependency.getValue();
-            if(jsonValue != null) {
-              value = jsonValue.getText();
-            }
+            value = dependency.getValue();
             break;
           }
         }
-        //// TODO: 22/03/16 add package.json modification tracker
-        return Result.create(value, PsiModificationTracker.MODIFICATION_COUNT);
+        if(value != null)
+          return Result.create(value.getText(), value.getContainingFile());
+        return Result.create(null, tracker.getValue());
       }
     });
   }
 
   public String getComponentsRoot() {
-    //// TODO: 21/03/16 calc value from config files
-    return "catberry_components";
+    if (DumbService.isDumb(project))
+      return CatberryConstants.CATBERRY_COMPONENTS;
+
+    final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
+    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<String>() {
+      @Nullable
+      @Override
+      public Result<String> compute() {
+        VirtualFile vf = project.getBaseDir().findChild("config");
+        if (vf == null)
+          return Result.create(CatberryConstants.CATBERRY_COMPONENTS, tracker.getValue());
+        vf = vf.findChild("environment.json");
+        if (vf == null)
+          return Result.create(CatberryConstants.CATBERRY_COMPONENTS, tracker.getValue());
+        final JsonFile file = (JsonFile) PsiManager.getInstance(project).findFile(vf);
+        if (file == null)
+          return Result.create(CatberryConstants.CATBERRY_COMPONENTS, tracker.getValue());
+        List<JsonProperty> properties = PsiTreeUtil.getChildrenOfTypeAsList(file.getTopLevelValue(), JsonProperty.class);
+        JsonValue value = null;
+        for (JsonProperty property : properties) {
+          if (!property.getName().equals("dependencies"))
+            continue;
+          final JsonObject propertyObject = (JsonObject) property.getValue();
+          if (propertyObject == null)
+            continue;
+          final List<JsonProperty> dependencies = PsiTreeUtil.getChildrenOfTypeAsList(propertyObject, JsonProperty.class);
+          for (final JsonProperty dependency : dependencies) {
+            if (!"catberry".equals(dependency.getName()))
+              continue;
+            value = dependency.getValue();
+            break;
+          }
+        }
+        if(value != null)
+          return Result.create(value.getText(), value.getContainingFile());
+        return Result.create(null, tracker.getValue());
+      }
+    });
+  }
+
+  private NotNullLazyValue<ModificationTracker> getCatberryTracker() {
+    NotNullLazyValue<ModificationTracker> tracker = project.getUserData(TRACKER);
+    if (tracker == null) {
+      tracker = new AtomicNotNullLazyValue<ModificationTracker>() {
+        @NotNull
+        @Override
+        protected ModificationTracker compute() {
+          return new CatberryModificationTracker(project);
+        }
+      };
+      tracker = ((UserDataHolderEx)project).putUserDataIfAbsent(TRACKER, tracker);
+    }
+    return tracker;
   }
 
   public TemplateEngine getTemplateEngine() {
@@ -220,5 +280,21 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
     return project.getComponent(CatberryProjectConfigurationManager.class);
   }
 
+  private static class CatberryModificationTracker extends SimpleModificationTracker {
+    CatberryModificationTracker(final Project project) {
+      VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
+        @Override
+        public void fileCreated(@NotNull VirtualFileEvent event) {
+          incModificationCount();
+        }
+      }, project);
+      project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+        @Override
+        public void rootsChanged(ModuleRootEvent event) {
+          incModificationCount();
+        }
+      });
+    }
+  }
 
 }
