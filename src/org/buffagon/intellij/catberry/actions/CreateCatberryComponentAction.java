@@ -22,6 +22,7 @@ import org.buffagon.intellij.catberry.settings.CatberryProjectConfigurationManag
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.net.URI;
 
 /**
  * Action for create new Catberry component.
@@ -34,7 +35,7 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final IdeView view = e.getData(LangDataKeys.IDE_VIEW);
-    if (view == null)
+    if (view == null || e.getProject() == null)
       return;
 
     final Project project = e.getData(CommonDataKeys.PROJECT);
@@ -51,6 +52,17 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
     CatberryProjectConfigurationManager configurationManager = CatberryProjectConfigurationManager.getInstance(project);
 
     TemplateEngine templateEngine = configurationManager.getTemplateEngine();
+    if(templateEngine == null) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          Notification notification = CatberryConstants.CATBERRY_NOTIFICATION_GROUP.createNotification(
+              CatberryBundle.message("template.engine.not.set"), NotificationType.ERROR);
+          Notifications.Bus.notify(notification, project);
+        }
+      });
+      return;
+    }
     if (!createCatberryModuleStructure(path, name, templateEngine, e.getProject()))
       return;
 
@@ -120,7 +132,11 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
       return false;
 
     final PsiDirectory[] directories = ideView.getDirectories();
-    return (directories.length == 1 &&
-        directories[0].getVirtualFile().getPath().contains(configurationManager.getComponentsRoot()));
+    if(directories.length != 1)
+      return false;
+    URI base = new File(project.getBaseDir().getPath()).toURI();
+    URI current = new File(directories[0].getVirtualFile().getPath()).toURI();
+    String relativePath = base.relativize(current).getPath();
+    return relativePath.startsWith(configurationManager.getComponentsRoot());
   }
 }

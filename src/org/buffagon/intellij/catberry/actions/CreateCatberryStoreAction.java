@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * Action for create new Catberry store.
@@ -111,7 +112,11 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
       return false;
 
     final PsiDirectory[] directories = ideView.getDirectories();
-    return (directories.length == 1 &&
-        directories[0].getVirtualFile().getPath().contains(configurationManager.getStoresRoot()));
+    if(directories.length != 1)
+      return false;
+    URI base = new File(project.getBaseDir().getPath()).toURI();
+    URI current = new File(directories[0].getVirtualFile().getPath()).toURI();
+    String relativePath = base.relativize(current).getPath();
+    return relativePath.startsWith(configurationManager.getStoresRoot());
   }
 }
