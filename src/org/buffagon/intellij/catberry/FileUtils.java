@@ -25,18 +25,23 @@ public class FileUtils {
   }
 
   private static boolean copyFilesRecusively(final File toCopy,
-                                             final File destDir) {
+                                             final File destDir, boolean copyRoot) {
     assert destDir.isDirectory();
 
     if (!toCopy.isDirectory()) {
       return FileUtils.copyFile(toCopy, new File(destDir, toCopy.getName()));
     } else {
-      final File newDestDir = new File(destDir, toCopy.getName());
-      if (!newDestDir.exists() && !newDestDir.mkdir()) {
-        return false;
+      File newDestDir;
+      if(copyRoot) {
+        newDestDir = new File(destDir, toCopy.getName());
+        if (!newDestDir.exists() && !newDestDir.mkdir()) {
+          return false;
+        }
+      } else {
+        newDestDir = destDir;
       }
       for (final File child : toCopy.listFiles()) {
-        if (!FileUtils.copyFilesRecusively(child, newDestDir)) {
+        if (!FileUtils.copyFilesRecusively(child, newDestDir, true)) {
           return false;
         }
       }
@@ -52,8 +57,7 @@ public class FileUtils {
     for (final Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
       final JarEntry entry = e.nextElement();
       if (entry.getName().startsWith(jarConnection.getEntryName())) {
-        final String filename = StringUtils.removeStart(entry.getName(), //
-            jarConnection.getEntryName());
+        final String filename = StringUtils.removeStart(entry.getName(), jarConnection.getEntryName());
 
         final File f = new File(destDir, filename);
         if (!entry.isDirectory()) {
@@ -64,8 +68,7 @@ public class FileUtils {
           entryInputStream.close();
         } else {
           if (!FileUtils.ensureDirectoryExists(f)) {
-            throw new IOException("Could not create directory: "
-                + f.getAbsolutePath());
+            throw new IOException("Could not create directory: " + f.getAbsolutePath());
           }
         }
       }
@@ -73,16 +76,13 @@ public class FileUtils {
     return true;
   }
 
-  public static boolean copyResourcesRecursively( //
-                                                  final URL originUrl, final File destination) {
+  public static boolean copyResourcesRecursively(final URL originUrl, final File destination, boolean copyRoot) {
     try {
       final URLConnection urlConnection = originUrl.openConnection();
       if (urlConnection instanceof JarURLConnection) {
-        return FileUtils.copyJarResourcesRecursively(destination,
-            (JarURLConnection) urlConnection);
+        return FileUtils.copyJarResourcesRecursively(destination,(JarURLConnection) urlConnection);
       } else {
-        return FileUtils.copyFilesRecusively(new File(originUrl.getPath()),
-            destination);
+        return FileUtils.copyFilesRecusively(new File(originUrl.getPath()), destination, copyRoot);
       }
     } catch (final IOException e) {
       e.printStackTrace();

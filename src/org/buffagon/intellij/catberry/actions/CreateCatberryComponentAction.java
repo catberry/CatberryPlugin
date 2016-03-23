@@ -101,7 +101,7 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
       final String camelCaseName = StringUtil.toCamelCase(name, "-");
       final String resourcesDir = "templates/module_presets/component-" + templateEngine + "/";
       URL url = CreateCatberryComponentAction.class.getClassLoader().getResource(resourcesDir);
-      FileUtils.copyResourcesRecursively(url, f);
+      FileUtils.copyResourcesRecursively(url, f, false);
       final Processor<String, String> processor = new Processor<String, String>() {
         @Override
         public String process(String value) {

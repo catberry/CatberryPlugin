@@ -22,17 +22,19 @@ public class FileSystemWorker {
   }
 
   public static void processTextFile(File file, Processor<String, String> processor) throws IOException {
-    FileReader fr = new FileReader(file);
-    BufferedReader br=new BufferedReader(fr);
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    StringBuilder stringBuilder = new StringBuilder();
+    String ls = System.getProperty("line.separator");
 
-    FileWriter fw = new FileWriter(file);
-    BufferedWriter bw = new BufferedWriter(fw);
     String line;
     while((line=br.readLine())!=null) {
-      bw.write(processor.process(line));
-      bw.newLine();
+      stringBuilder.append(processor.process(line));
+      stringBuilder.append(ls);
     }
     br.close();
+
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+    bw.write(stringBuilder.toString());
     bw.close();
   }
 }

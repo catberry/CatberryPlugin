@@ -81,7 +81,7 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
       return false;
     }
     URL url = CreateCatberryStoreAction.class.getClassLoader().getResource("templates/module_presets/Store.js");
-    if (!FileUtils.copyResourcesRecursively(url, new File(path))) {
+    if (!FileUtils.copyResourcesRecursively(url, new File(path), false)) {
       LOG.error("Unable to copy store template resources.");
       return false;
     }
@@ -92,12 +92,12 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
         return value.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, name);
       }
     };
-//    try {
-//      FileSystemWorker.processTextFile(f, processor);
-//    } catch (IOException e) {
-//      LOG.error(e);
-//      return false;
-//    }
+    try {
+      FileSystemWorker.processTextFile(f, processor);
+    } catch (IOException e) {
+      LOG.error(e);
+      return false;
+    }
     return true;
   }
 

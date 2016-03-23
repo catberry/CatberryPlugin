@@ -57,7 +57,7 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryProject
             URL url = CatberryProjectGenerator.class.getClassLoader().getResource(
                 "templates/new_project/" + data.templateEngine);
 
-            if (!FileUtils.copyResourcesRecursively(url, new File(baseDir.getPath())))
+            if (!FileUtils.copyResourcesRecursively(url, new File(baseDir.getPath()), false))
               LOG.error("Unable to copy resources for project generation");
 
 
