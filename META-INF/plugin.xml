@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.buffagon.intellij.catberry</id>
   <name>Catberry Framework support</name>
-  <version>0.1.2</version>
+  <version>0.2</version>
   <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Alex Prokofiev</vendor>
 
   <description><![CDATA[
@@ -9,7 +9,10 @@
     ]]></description>
 
   <change-notes><![CDATA[
-    Add navigation to components from Dust and Jade templates.
+  <ul>
+    <li>Remove catberry-cli dependency.
+    <li>Remove GUI settings. Settings are obtained from configuration files.
+  </ui>
     ]]>
   </change-notes>
 

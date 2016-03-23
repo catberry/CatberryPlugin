@@ -10,21 +10,22 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.CatberryIcons;
 import org.buffagon.intellij.catberry.CatberryBundle;
-import org.buffagon.intellij.catberry.ResourcesUtil;
-import org.buffagon.intellij.catberry.TemplateEngine;
+import org.buffagon.intellij.catberry.FileUtils;
 import org.buffagon.intellij.catberry.settings.CatberryProjectSettings;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * @author Prokofiev Alex
  */
 public class CatberryProjectGenerator extends WebProjectTemplate<CatberryProjectSettings>
-    implements Comparable<CatberryProjectGenerator>{
+    implements Comparable<CatberryProjectGenerator> {
   public static final Logger LOG = Logger.getInstance(CatberryProjectGenerator.class.getName());
 
   @Nls
@@ -48,22 +49,21 @@ public class CatberryProjectGenerator extends WebProjectTemplate<CatberryProject
   public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
                               @NotNull final CatberryProjectSettings data, @NotNull final Module module) {
     ApplicationManager.getApplication().runWriteAction(
-      new Runnable() {
-        public void run() {
-          final ModifiableRootModel modifiableModel =
-              ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
+        new Runnable() {
+          public void run() {
+            final ModifiableRootModel modifiableModel =
+                ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module);
 
-          try {
-            ResourcesUtil.copyResourcesDir("templates/new_project/"+data.templateEngine, baseDir.getPath(), null);
-          } catch (IOException e) {
-            LOG.error(e);
-          } catch (URISyntaxException e) {
-            LOG.error(e);
+            URL url = CatberryProjectGenerator.class.getClassLoader().getResource(
+                "templates/new_project/" + data.templateEngine);
+
+            if (!FileUtils.copyResourcesRecursively(url, new File(baseDir.getPath())))
+              LOG.error("Unable to copy resources for project generation");
+
+
+            ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel);
           }
-
-          ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel);
         }
-      }
     );
   }
 

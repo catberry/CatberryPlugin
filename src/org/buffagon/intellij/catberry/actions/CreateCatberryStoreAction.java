@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * Action for create new Catberry store.
@@ -65,31 +66,38 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
   private boolean createCatberryStore(@NotNull final String path, @NotNull final String name,
                                       @NotNull final Project project) {
 
-    try {
-      final String targetPath = path + File.separator + name + ".js";
-      File f = new File(targetPath);
-      if (f.exists()) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            Notification notification = CatberryConstants.CATBERRY_NOTIFICATION_GROUP.createNotification(
-                CatberryBundle.message("store.already.exists"), NotificationType.ERROR);
-            Notifications.Bus.notify(notification, project);
-          }
-        });
-        return false;
-      }
-      Processor<String, String> processor = new Processor<String, String>() {
+
+    final String targetPath = path + File.separator + name + ".js";
+    File f = new File(targetPath);
+    if (f.exists()) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
-        public String process(String value) {
-          return value.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, name);
+        public void run() {
+          Notification notification = CatberryConstants.CATBERRY_NOTIFICATION_GROUP.createNotification(
+              CatberryBundle.message("store.already.exists"), NotificationType.ERROR);
+          Notifications.Bus.notify(notification, project);
         }
-      };
-      ResourcesUtil.copyResource("templates/module_presets/Store.js", targetPath, processor);
-    } catch (IOException e) {
-      LOG.error(e);
+      });
       return false;
     }
+    URL url = CreateCatberryStoreAction.class.getClassLoader().getResource("templates/module_presets/Store.js");
+    if (!FileUtils.copyResourcesRecursively(url, new File(path))) {
+      LOG.error("Unable to copy store template resources.");
+      return false;
+    }
+
+    Processor<String, String> processor = new Processor<String, String>() {
+      @Override
+      public String process(String value) {
+        return value.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, name);
+      }
+    };
+//    try {
+//      FileSystemWorker.processTextFile(f, processor);
+//    } catch (IOException e) {
+//      LOG.error(e);
+//      return false;
+//    }
     return true;
   }
 
@@ -112,7 +120,7 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
       return false;
 
     final PsiDirectory[] directories = ideView.getDirectories();
-    if(directories.length != 1)
+    if (directories.length != 1)
       return false;
     URI base = new File(project.getBaseDir().getPath()).toURI();
     URI current = new File(directories[0].getVirtualFile().getPath()).toURI();

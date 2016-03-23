@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * Action for create new Catberry component.
@@ -94,9 +95,13 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
           }
         });
         return false;
+      } else {
+        f.mkdirs();
       }
       final String camelCaseName = StringUtil.toCamelCase(name, "-");
       final String resourcesDir = "templates/module_presets/component-" + templateEngine + "/";
+      URL url = CreateCatberryComponentAction.class.getClassLoader().getResource(resourcesDir);
+      FileUtils.copyResourcesRecursively(url, f);
       final Processor<String, String> processor = new Processor<String, String>() {
         @Override
         public String process(String value) {
@@ -104,8 +109,7 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
           return value.replace(CatberryConstants.TEMPLATE_PASCAL_NAME, camelCaseName);
         }
       };
-
-      ResourcesUtil.copyResourcesDir(resourcesDir, targetPath, processor);
+      FileSystemWorker.processTextFilesRecursively(f, processor);
     } catch (Exception e) {
       LOG.error(e);
       return false;
