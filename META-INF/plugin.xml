@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.buffagon.intellij.catberry</id>
   <name>Catberry Framework support</name>
-  <version>0.2</version>
+  <version>0.2.0</version>
   <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Alex Prokofiev</vendor>
 
   <description><![CDATA[
