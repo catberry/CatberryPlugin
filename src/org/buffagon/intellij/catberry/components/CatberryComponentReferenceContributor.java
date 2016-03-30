@@ -4,6 +4,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.util.ProcessingContext;
+import org.buffagon.intellij.catberry.CatberryConstants;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,8 +20,8 @@ public class CatberryComponentReferenceContributor extends PsiReferenceContribut
           public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
             HtmlTag htmlTag = (HtmlTag) element;
             String name = htmlTag.getName();
-            if(name.startsWith("cat-"))
-              name = name.substring(4);
+            if(name.startsWith(CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX))
+              name = name.substring(CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX.length());
             return new PsiReference[]{new CatberryComponentReference(htmlTag, name)};
           }
         });
