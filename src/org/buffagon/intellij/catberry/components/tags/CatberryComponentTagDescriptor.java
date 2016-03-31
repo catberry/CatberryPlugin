@@ -1,8 +1,8 @@
 package org.buffagon.intellij.catberry.components.tags;
 
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -18,25 +18,25 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Dennis.Ushakov
+ * @author Prokofiev Alex
  */
 public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
-  protected final String myName;
-  private final JSImplicitElement myDeclaration;
+  protected final String name;
+  private final PsiFile file;
 
-  public CatberryComponentTagDescriptor(String name, JSImplicitElement declaration) {
-    myName = name;
-    myDeclaration = declaration;
+  public CatberryComponentTagDescriptor(String name, PsiFile file) {
+    this.name = name;
+    this.file = file;
   }
 
   @Override
   public String getQualifiedName() {
-    return myName;
+    return name;
   }
 
   @Override
   public String getDefaultName() {
-    return myName;
+    return name;
   }
 
   @Override
@@ -56,12 +56,12 @@ public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    final JSImplicitElement declaration = getDeclaration();
-    final String string = declaration.getTypeString();
-    final String attributes = string.split(";", -1)[3];
-    final String[] split = attributes.split(",");
-    final XmlAttributeDescriptor[] result;
     // TODO: 31.03.16
+//    final PsiFile file = getDeclaration();
+//    final String string = file.getTypeString();
+//    final String attributes = string.split(";", -1)[3];
+//    final String[] split = attributes.split(",");
+//    final XmlAttributeDescriptor[] result;
 //    if (context != null && AngularIndexUtil.hasAngularJS2(context.getProject())) {
 //      result = AngularAttributeDescriptor.getFieldBasedDescriptors(declaration);
 //    } else if (split.length == 1 && split[0].isEmpty()) {
@@ -120,8 +120,8 @@ public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
   }
 
   @Override
-  public JSImplicitElement getDeclaration() {
-    return myDeclaration;
+  public PsiFile getDeclaration() {
+    return file;
   }
 
   @Override
@@ -131,7 +131,7 @@ public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public String getName() {
-    return myName;
+    return name;
   }
 
   @Override

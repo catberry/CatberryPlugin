@@ -22,15 +22,16 @@ public class CatberryComponentMarkerProvider extends RelatedItemLineMarkerProvid
   protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
     if (element instanceof XmlTag) {
       XmlTag tag = (XmlTag) element;
+
       String name = tag.getName();
-      if(!CatberryConstants.COMPONENTS_TAGS.contains(name)) {
-        if(!name.startsWith("cat-"))
+      if(!CatberryConstants.SPECIAL_COMPONENT_NAMES.contains(name)) {
+        if(!name.startsWith(CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX))
           return;
-        name = name.substring(4);
+        name = CatberryComponentUtils.normalizeName(name);
       }
 
-      Project project = element.getProject();
-      PsiFile file =  CatberryComponentUtils.findComponent(project, name);
+      final Project project = element.getProject();
+      final PsiFile file =  CatberryComponentUtils.findComponentTemplate(project, name);
       if (file != null) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(AllIcons.General.OverridenMethod).setTarget(file).setTooltipText(

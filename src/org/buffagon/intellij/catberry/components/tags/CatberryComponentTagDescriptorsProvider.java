@@ -9,16 +9,20 @@ import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
+import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
+import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.components.CatberryComponentUtils;
 import org.buffagon.intellij.catberry.settings.CatberryProjectConfigurationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * @author Dennis.Ushakov
+ * @author Prokofiev Alex
  */
 public class CatberryComponentTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   @Override
@@ -28,32 +32,30 @@ public class CatberryComponentTagDescriptorsProvider implements XmlElementDescri
     if (!(xmlTag instanceof HtmlTag && manager.isCatberryEnabled())) return;
 
     final Project project = xmlTag.getProject();
-    for(PsiFile file : CatberryComponentUtils.findComponents(project).values()) {
-      addLookupItem(elements, file);
+    Map<String, PsiFile> map = CatberryComponentUtils.findComponents(project);
+    for(Map.Entry<String, PsiFile> entry : map.entrySet()) {
+      if(CatberryConstants.SPECIAL_COMPONENT_NAMES.contains(entry.getKey()))
+        continue;
+      final String key = CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX + entry.getKey();
+      elements.add(LookupElementBuilder.create(entry.getValue(), key).withInsertHandler(XmlTagInsertHandler.INSTANCE));
     }
-  }
-
-  private static void addLookupItem(List<LookupElement> elements, PsiFile file) {
-    elements.add(LookupElementBuilder.create(file).withInsertHandler(XmlTagInsertHandler.INSTANCE));
   }
 
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
-//    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return null;
-//
-//    final String directiveName = DirectiveUtil.normalizeAttributeName(xmlTag.getName());
-//    final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
-//    final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
-//    if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
-//      return null;
-//    }
-//
-//    final Project project = xmlTag.getProject();
-//    final JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
-//
-//    return directive != null ? new CatberryComponentTagDescriptor(directiveName, directive) : null;
-    // TODO: 31.03.16
-    return null;
+    final Project project = xmlTag.getProject();
+    CatberryProjectConfigurationManager manager = CatberryProjectConfigurationManager.getInstance(project);
+
+    if (!(xmlTag instanceof HtmlTag && manager.isCatberryEnabled())) return null;
+
+    final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
+    final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
+    if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) return null;
+
+    final String name = CatberryComponentUtils.normalizeName(xmlTag.getName());
+
+    final PsiFile file = CatberryComponentUtils.findComponent(project, name);
+    return file != null ? new CatberryComponentTagDescriptor(xmlTag.getName(), file) : null;
   }
 }

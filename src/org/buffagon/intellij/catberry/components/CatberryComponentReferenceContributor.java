@@ -19,9 +19,7 @@ public class CatberryComponentReferenceContributor extends PsiReferenceContribut
           @Override
           public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
             HtmlTag htmlTag = (HtmlTag) element;
-            String name = htmlTag.getName();
-            if(name.startsWith(CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX))
-              name = name.substring(CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX.length());
+            String name = CatberryComponentUtils.normalizeName(htmlTag.getName());
             return new PsiReference[]{new CatberryComponentReference(htmlTag, name)};
           }
         });

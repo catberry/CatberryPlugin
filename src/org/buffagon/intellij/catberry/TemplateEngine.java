@@ -1,27 +1,31 @@
 package org.buffagon.intellij.catberry;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Prokofiev Alex
  */
 public enum TemplateEngine {
-  HANDLEBARS("handlebars", "^2.0.1"),
-  DUST("dust", "^3.0.13"),
-  JADE("jade", "^1.1.6");
+  HANDLEBARS("handlebars", "hbs"),
+  DUST("dust", "dust"),
+  JADE("jade", "jade");
 
-  TemplateEngine(String name, String version) {
+  TemplateEngine(String name, String extension) {
     this.name = name;
-    this.version = version;
+    this.extension = extension;
   }
 
   private final String name;
-  private final String version;
+  private final String extension;
 
+  @NotNull
   public String getName() {
     return name;
   }
 
-  public String getVersion() {
-    return version;
+  @NotNull
+  public String getExtension() {
+    return extension;
   }
 
   @Override

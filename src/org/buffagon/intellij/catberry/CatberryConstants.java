@@ -13,20 +13,18 @@ import java.util.Set;
  */
 public final class CatberryConstants {
   public static final String DEFAULT_COMPONENT_JS = "index.js";
+  public static final String DEFAULT_TEMPLATE_PREFIX = "template.";
   public static final String DEFAULT_TEMPLATE_ENGINE = "handlebars";
   public static final String CAT_COMPONENT_JSON = "cat-component.json";
   public static final String CATBERRY_COMPONENTS = "catberry_components";
   public static final String CATBERRY_STORES = "catberry_stores";
-  public static final Set<String> COMPONENTS_TAGS = new HashSet<String>();
   public static final Set<String> SPECIAL_COMPONENT_NAMES = new HashSet<String>();
   public static final String TEMPLATE_PASCAL_NAME = "__pascalName__";
   public static final String TEMPLATE_NAME = "__name__";
   public static final String CATBERRY_COMPONENT_TAG_PREFIX = "cat-";
 
 
-
   static {
-    COMPONENTS_TAGS.addAll(Collections.singletonList("head"));
     SPECIAL_COMPONENT_NAMES.addAll(Arrays.asList("document", "head"));
   }
 

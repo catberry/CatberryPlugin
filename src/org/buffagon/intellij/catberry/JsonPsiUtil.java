@@ -13,7 +13,10 @@ import java.util.List;
  */
 public final class JsonPsiUtil {
   @Nullable
-  public static JsonValue findPropertyValue(@NotNull final JsonValue rootValue, @NotNull final String path) {
+  public static JsonValue findPropertyValue(@Nullable final JsonValue rootValue, @NotNull final String path) {
+    if(rootValue == null)
+      return null;
+
     JsonValue currentValue = rootValue;
     for(final String name : path.split("/")) {
       List<JsonProperty> properties = PsiTreeUtil.getChildrenOfTypeAsList(currentValue, JsonProperty.class);
