@@ -2,9 +2,10 @@
 Intellij platform plugin for Catberry JS framework
 
 #### Main features:
-* Create Catberry project
-* Create Catberry components
-* Create Catberry stores
+* Create Catberry project.
+* Create Catberry components.
+* Create Catberry stores.
+* Auto-completion catberry-tags in template and navigation to components.
 
 #### How to use:
 * Download [plugin](https://yadi.sk/d/Ws4bwFAjq3oxN)

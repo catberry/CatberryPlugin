@@ -56,24 +56,7 @@ public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    // TODO: 31.03.16
-//    final PsiFile file = getDeclaration();
-//    final String string = file.getTypeString();
-//    final String attributes = string.split(";", -1)[3];
-//    final String[] split = attributes.split(",");
-//    final XmlAttributeDescriptor[] result;
-//    if (context != null && AngularIndexUtil.hasAngularJS2(context.getProject())) {
-//      result = AngularAttributeDescriptor.getFieldBasedDescriptors(declaration);
-//    } else if (split.length == 1 && split[0].isEmpty()) {
-//      result = XmlAttributeDescriptor.EMPTY;
-//    } else {
-//      result = new XmlAttributeDescriptor[split.length];
-//      for (int i = 0; i < split.length; i++) {
-//        result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
-//      }
-//    }
-    final XmlAttributeDescriptor[] commonAttributes = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
-    return ArrayUtil.mergeArrays(XmlAttributeDescriptor.EMPTY, commonAttributes);
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 
   @Nullable
@@ -93,8 +76,6 @@ public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
       });
     if (descriptor != null) return descriptor;
     return null;
-    // TODO: 31.03.16  
-//    return context != null ? AngularJSAttributeDescriptorsProvider.getAngular2Descriptor(attributeName, context.getProject()) : null;
   }
 
   @Override
