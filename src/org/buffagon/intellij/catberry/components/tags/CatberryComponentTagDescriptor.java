@@ -14,6 +14,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
+import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +57,10 @@ public class CatberryComponentTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
+    XmlAttributeDescriptor[] attributeDescriptors = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
+    XmlAttributeDescriptor[] customAttributes = new XmlAttributeDescriptor[1];
+    customAttributes[0] = new AnyXmlAttributeDescriptor("cat-store");
+    return ArrayUtil.mergeArrays(attributeDescriptors, customAttributes);
   }
 
   @Nullable

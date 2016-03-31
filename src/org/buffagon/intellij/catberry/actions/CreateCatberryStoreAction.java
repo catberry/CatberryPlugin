@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
@@ -80,8 +81,9 @@ public class CreateCatberryStoreAction extends DumbAwareAction {
       });
       return false;
     }
-    URL url = CreateCatberryStoreAction.class.getClassLoader().getResource("templates/module_presets/Store.js");
-    if (!FileUtils.copyResourcesRecursively(url, new File(path), false)) {
+    InputStream in = CreateCatberryStoreAction.class.getClassLoader().
+        getResourceAsStream("templates/module_presets/Store.js");
+    if (!FileUtils.copyStream(in, new File(targetPath))) {
       LOG.error("Unable to copy store template resources.");
       return false;
     }

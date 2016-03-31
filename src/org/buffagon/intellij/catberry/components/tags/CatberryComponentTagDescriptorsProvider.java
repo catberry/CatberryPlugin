@@ -34,9 +34,9 @@ public class CatberryComponentTagDescriptorsProvider implements XmlElementDescri
     final Project project = xmlTag.getProject();
     Map<String, PsiFile> map = CatberryComponentUtils.findComponents(project);
     for(Map.Entry<String, PsiFile> entry : map.entrySet()) {
-      if(CatberryConstants.SPECIAL_COMPONENT_NAMES.contains(entry.getKey()))
-        continue;
-      final String key = CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX + entry.getKey();
+      String key = entry.getKey();
+      if(!CatberryConstants.SPECIAL_COMPONENT_NAMES.contains(entry.getKey()))
+        key = CatberryConstants.CATBERRY_COMPONENT_TAG_PREFIX + key;
       elements.add(LookupElementBuilder.create(entry.getValue(), key).withInsertHandler(XmlTagInsertHandler.INSTANCE));
     }
   }
@@ -51,10 +51,10 @@ public class CatberryComponentTagDescriptorsProvider implements XmlElementDescri
 
     final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
     final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
-    if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) return null;
+    final boolean special = CatberryConstants.SPECIAL_COMPONENT_NAMES.contains(xmlTag.getName());
+    if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor || special)) return null;
 
     final String name = CatberryComponentUtils.normalizeName(xmlTag.getName());
-
     final PsiFile file = CatberryComponentUtils.findComponent(project, name);
     return file != null ? new CatberryComponentTagDescriptor(xmlTag.getName(), file) : null;
   }
