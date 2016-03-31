@@ -35,9 +35,10 @@
     <codeInsight.lineMarkerProvider language="Jade" implementationClass="org.buffagon.intellij.catberry.components.CatberryComponentMarkerProvider"/>
 
     <psi.referenceContributor implementation="org.buffagon.intellij.catberry.components.CatberryComponentReferenceContributor"/>
-    <completion.contributor language="HTML" implementationClass="org.buffagon.intellij.catberry.components.CatberryComponentTagNameCompletionContributor"/>
+    <!--<completion.contributor language="HTML" implementationClass="org.buffagon.intellij.catberry.components.TagNameCompletionContributor"/>-->
     <!--suppress PluginXmlValidity -->
-    <completion.contributor language="Jade" implementationClass="org.buffagon.intellij.catberry.components.CatberryComponentTagNameCompletionContributor"/>
+    <!--<completion.contributor language="Jade" implementationClass="org.buffagon.intellij.catberry.components.TagNameCompletionContributor"/>-->
+    <xml.tagNameProvider implementation="org.buffagon.intellij.catberry.components.tags.CatberryComponentTagDescriptorsProvider" />
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
