@@ -1,18 +1,27 @@
 <idea-plugin version="2">
   <id>org.buffagon.intellij.catberry</id>
   <name>Catberry Framework support</name>
-  <version>0.3.0</version>
-  <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Alex Prokofiev</vendor>
+  <version>0.4.0</version>
+  <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Prokofiev Alex</vendor>
 
   <description><![CDATA[
       Catberry is a framework with Flux architecture, isomorphic web-components and progressive rendering.
+      <br/>
+      <br/>
+      Main features:
+      <ul>
+        <li>Create Catberry project.</li>
+        <li>Create Catberry components.</li>
+        <li>Create Catberry stores.</li>
+        <li>Auto-completion catberry-tags in template and navigation to components.</li>
+        <li>Navigation to cat-component template from tag declaration.</li>
+        <li>Auto-completion cat-store attributes in template and navigation to store.</li>
+      </ul>
     ]]></description>
 
   <change-notes><![CDATA[
   <ul>
-      <li>Markers for navigation to template from component-tag.</li>
-      <li>Catberry-tags completion in templates.</li>
-      <li>"Go to definition" on component-tag navigate to component js file.</li>
+      <li>Auto-completion cat-store attributes in template and navigation to store.</li>
   </ui>
     ]]>
   </change-notes>
@@ -35,9 +44,10 @@
     <!--suppress PluginXmlValidity -->
     <codeInsight.lineMarkerProvider language="Jade" implementationClass="org.buffagon.intellij.catberry.components.CatberryComponentMarkerProvider"/>
 
-    <psi.referenceContributor implementation="org.buffagon.intellij.catberry.components.CatberryComponentReferenceContributor"/>
+    <!--<psi.referenceContributor implementation="org.buffagon.intellij.catberry.components.CatberryComponentReferenceContributor"/>-->
     <xml.tagNameProvider implementation="org.buffagon.intellij.catberry.components.tags.CatberryComponentTagDescriptorsProvider" />
     <xml.elementDescriptorProvider implementation="org.buffagon.intellij.catberry.components.tags.CatberryComponentTagDescriptorsProvider" order="last"/>
+    <xml.attributeDescriptorsProvider implementation="org.buffagon.intellij.catberry.components.attributes.CatberryAttributeDescriptorsProvider" order="first"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

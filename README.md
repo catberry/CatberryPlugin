@@ -6,6 +6,8 @@ Intellij platform plugin for Catberry JS framework
 * Create Catberry components.
 * Create Catberry stores.
 * Auto-completion catberry-tags in template and navigation to components.
+* Navigation to cat-component template from tag declaration.
+* Auto-completion cat-store attributes in template and navigation to store.
 
 #### How to use:
 * Download [plugin](https://yadi.sk/d/Ws4bwFAjq3oxN)

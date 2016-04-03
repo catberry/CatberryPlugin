@@ -138,9 +138,12 @@ public class CreateCatberryComponentAction extends DumbAwareAction {
     final PsiDirectory[] directories = ideView.getDirectories();
     if(directories.length != 1)
       return false;
-    URI base = new File(project.getBaseDir().getPath()).toURI();
-    URI current = new File(directories[0].getVirtualFile().getPath()).toURI();
-    String relativePath = base.relativize(current).getPath();
-    return relativePath.startsWith(configurationManager.getComponentsRoot());
+    final String selectedPath = directories[0].getVirtualFile().getPath();
+
+    for(PsiDirectory dir : configurationManager.getComponentsDirectories()) {
+      if(selectedPath.startsWith(dir.getVirtualFile().getPath()))
+        return true;
+    }
+    return false;
   }
 }

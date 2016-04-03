@@ -14,14 +14,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.JsonPsiUtil;
 import org.buffagon.intellij.catberry.TemplateEngine;
-import org.buffagon.intellij.catberry.settings.providers.ComponentsRootProvider;
-import org.buffagon.intellij.catberry.settings.providers.StoresRootProvider;
+import org.buffagon.intellij.catberry.settings.providers.ComponentsDirectoriesProvider;
+import org.buffagon.intellij.catberry.settings.providers.StoresDirectoryProvider;
 import org.buffagon.intellij.catberry.settings.providers.TemplateEngineProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,10 +30,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Prokofiev Alex
  */
-
 public class CatberryProjectConfigurationManager implements ProjectComponent {
   private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("catberry.js.tracker");
-  private static final Logger LOG = Logger.getInstance(CatberryProjectConfigurationManager.class.getName());
   private Project project;
 
   public CatberryProjectConfigurationManager(Project project) {
@@ -94,19 +93,13 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
   }
 
   @NotNull
-  public String getComponentsRoot() {
-    String value = null;
-    if (!DumbService.isDumb(project)) {
-      final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
-      ComponentsRootProvider provider = new ComponentsRootProvider(project, tracker);
-      value = CachedValuesManager.getManager(project).getCachedValue(project, provider);
-    }
+  public PsiDirectory[] getComponentsDirectories() {
+    if (DumbService.isDumb(project))
+      return new PsiDirectory[0];
 
-    if(value == null)
-      value = CatberryConstants.CATBERRY_COMPONENTS;
-    if(!value.endsWith("/"))
-      value += "/";
-    return value;
+    final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
+    ComponentsDirectoriesProvider provider = new ComponentsDirectoriesProvider(project, tracker);
+    return CachedValuesManager.getManager(project).getCachedValue(project, provider);
   }
 
   @Nullable
@@ -118,23 +111,13 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
     return CachedValuesManager.getManager(project).getCachedValue(project, provider);
   }
 
-  @NotNull
-  public String getStoresRoot() {
-    String value = null;
-    if (!DumbService.isDumb(project)) {
-      final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
-      StoresRootProvider provider = new StoresRootProvider(project, tracker);
-      value = CachedValuesManager.getManager(project).getCachedValue(project, provider);
-    }
-
-    if(value == null)
-      value = CatberryConstants.CATBERRY_STORES;
-    if(value.startsWith("./")) {
-      value = new StringBuilder(value).delete(0,2).toString();
-    }
-    if(!value.endsWith("/"))
-      value += "/";
-    return value;
+  @Nullable
+  public PsiDirectory getStoresDirectory() {
+    if (DumbService.isDumb(project))
+      return null;
+    final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
+    StoresDirectoryProvider provider = new StoresDirectoryProvider(project, tracker);
+    return CachedValuesManager.getManager(project).getCachedValue(project, provider);
   }
 
 

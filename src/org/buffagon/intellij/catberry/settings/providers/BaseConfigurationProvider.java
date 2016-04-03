@@ -1,60 +1,53 @@
 package org.buffagon.intellij.catberry.settings.providers;
 
-import com.intellij.json.psi.JsonArray;
 import com.intellij.json.psi.JsonFile;
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
 import com.intellij.json.psi.impl.JsonStringLiteralImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.ObjectUtils;
-import org.buffagon.intellij.catberry.CatberryConstants;
 import org.buffagon.intellij.catberry.JsonPsiUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Prokofiev Alex
  */
-public class ComponentsRootProvider implements CachedValueProvider<String> {
-  private final Project project;
-  private final NotNullLazyValue<ModificationTracker> tracker;
-  public ComponentsRootProvider(Project project, NotNullLazyValue<ModificationTracker> tracker) {
+@SuppressWarnings("WeakerAccess")
+public abstract class  BaseConfigurationProvider<T> implements CachedValueProvider<T> {
+  protected final Project project;
+
+  public BaseConfigurationProvider(Project project) {
     this.project = project;
-    this.tracker = tracker;
   }
 
   @Nullable
-  @Override
-  public Result<String> compute() {
+  protected JsonFile findPackageJsonFile() {
     VirtualFile packageVFile = project.getBaseDir().findChild("package.json");
     if (packageVFile == null)
-      return Result.create(null, tracker.getValue());
+      return null;
+    return ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(packageVFile), JsonFile.class);
+  }
 
-    final JsonFile packageJsonFile = (JsonFile) PsiManager.getInstance(project).findFile(packageVFile);
-    if (packageJsonFile == null || packageJsonFile.getTopLevelValue() == null)
-      return Result.create(null, tracker.getValue());
-
-    // find main js file
+  @Nullable
+  protected JSFile findMainJsFile(@NotNull JsonFile packageJsonFile) {
     final JsonStringLiteralImpl value = ObjectUtils.tryCast(JsonPsiUtil.findPropertyValue(
         packageJsonFile.getTopLevelValue(), "main"), JsonStringLiteralImpl.class);
     if (value == null)
-      return Result.create(null, tracker.getValue());
+      return null;
 
-    VirtualFile mainJsVFile = packageVFile.getParent().findFileByRelativePath(value.getValue());
+    VirtualFile mainJsVFile = packageJsonFile.getVirtualFile().getParent().findFileByRelativePath(value.getValue());
     if (mainJsVFile == null)
-      return Result.create(null, tracker.getValue());
+      return null;
 
-    final JSFile mainJsFile = ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(mainJsVFile), JSFile.class);
-    if (mainJsFile == null)
-      return Result.create(null, tracker.getValue());
+    return ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(mainJsVFile), JSFile.class);
+  }
 
+  @Nullable
+  protected JsonFile findConfigFile(@NotNull JSFile mainJsFile) {
     // find importing catberry in main js
     final Ref<JSVariable> catberryVariableRef = new Ref<JSVariable>(null);
     mainJsFile.acceptChildren(new JSRecursiveElementVisitor() {
@@ -79,9 +72,10 @@ public class ComponentsRootProvider implements CachedValueProvider<String> {
         }
       }
     });
+
     final JSVariable catberryVariable = catberryVariableRef.get();
     if (catberryVariable == null)
-      return Result.create(null, tracker.getValue());
+      return null;
 
     // find initialization catberry in main js
 
@@ -110,7 +104,7 @@ public class ComponentsRootProvider implements CachedValueProvider<String> {
 
     final String configVariableName = configVariableNameRef.get();
     if (configVariableName == null)
-      return Result.create(null, tracker.getValue());
+      return null;
 
     // find config loading
     final Ref<String> configVariablePathRef = new Ref<String>(null);
@@ -136,33 +130,16 @@ public class ComponentsRootProvider implements CachedValueProvider<String> {
           configVariablePathRef.set(value.getValue().toString());
       }
     });
+
     final String configVariablePath = configVariablePathRef.get();
     if (configVariablePath == null)
-      return Result.create(null, tracker.getValue());
+      return null;
 
-    final VirtualFile configVFile = mainJsVFile.getParent().findFileByRelativePath(configVariablePath);
+    final VirtualFile configVFile = mainJsFile.getVirtualFile().getParent().findFileByRelativePath(configVariablePath);
     if(configVFile == null)
-      return Result.create(null, tracker.getValue());
+      return null;
 
-    final JsonFile configFile = ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(configVFile), JsonFile.class);
-    if(configFile == null || configFile.getTopLevelValue() == null)
-      return Result.create(null, tracker.getValue());
-
-    JsonValue jsonValue = JsonPsiUtil.findPropertyValue(configFile.getTopLevelValue(), "componentsGlob");
-    if(jsonValue == null)
-      return Result.create(CatberryConstants.CATBERRY_COMPONENTS, configFile, mainJsFile, packageJsonFile);
-    String path = CatberryConstants.CATBERRY_COMPONENTS;
-    if(jsonValue instanceof JsonStringLiteral) {
-      path = ((JsonStringLiteral)jsonValue).getValue().split("\\*")[0];
-    } else if(jsonValue instanceof JsonArray) {
-      JsonArray jsonArray = (JsonArray) jsonValue;
-      if(jsonArray.getChildren().length > 0) {
-        PsiElement element = jsonArray.getChildren()[0];
-        if(element instanceof JsonStringLiteral) {
-          path = ((JsonStringLiteral) element).getValue().split("\\*")[0];
-        }
-      }
-    }
-    return Result.create(path, configFile, mainJsFile, packageJsonFile);
+    return ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(configVFile), JsonFile.class);
   }
+
 }

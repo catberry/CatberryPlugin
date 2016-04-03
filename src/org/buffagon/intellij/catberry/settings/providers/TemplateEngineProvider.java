@@ -21,13 +21,13 @@ import java.util.Map;
 /**
  * @author Prokofiev Alex
  */
-@SuppressWarnings("Duplicates")
-public class TemplateEngineProvider implements CachedValueProvider<TemplateEngine> {
-  private final Project project;
+public class TemplateEngineProvider extends BaseConfigurationProvider<TemplateEngine>
+    implements CachedValueProvider<TemplateEngine> {
   private final NotNullLazyValue<ModificationTracker> tracker;
   private final Map<String, TemplateEngine> engines = new HashMap<String, TemplateEngine>();
   public TemplateEngineProvider(Project project, NotNullLazyValue<ModificationTracker> tracker) {
-    this.project = project;
+    super(project);
+
     this.tracker = tracker;
     for (TemplateEngine engine : TemplateEngine.values()) {
       engines.put("catberry-" + engine, engine);
@@ -37,11 +37,7 @@ public class TemplateEngineProvider implements CachedValueProvider<TemplateEngin
   @Nullable
   @Override
   public Result<TemplateEngine> compute() {
-    VirtualFile packageVFile = project.getBaseDir().findChild("package.json");
-    if (packageVFile == null)
-      return Result.create(null, tracker.getValue());
-
-    final JsonFile packageJsonFile = (JsonFile) PsiManager.getInstance(project).findFile(packageVFile);
+    final JsonFile packageJsonFile = findPackageJsonFile();
     if (packageJsonFile == null)
       return Result.create(null, tracker.getValue());
 
