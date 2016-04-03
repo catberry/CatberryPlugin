@@ -52,7 +52,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
-
+    <frameworkIndexingHandler implementation="org.buffagon.intellij.catberry.index.CatberryIndexingHandler"/>
   </extensions>
 
 
