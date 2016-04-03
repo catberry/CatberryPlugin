@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.buffagon.intellij.catberry</id>
   <name>Catberry Framework support</name>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <vendor email="prokofiev.ad@yandex.ru" url="http://vk.com/buffagon">Prokofiev Alex</vendor>
 
   <description><![CDATA[
@@ -22,6 +22,7 @@
   <change-notes><![CDATA[
   <ul>
       <li>Auto-completion cat-store attributes in template and navigation to store.</li>
+      <li>Fix store references in sub folders.</li>
   </ui>
     ]]>
   </change-notes>

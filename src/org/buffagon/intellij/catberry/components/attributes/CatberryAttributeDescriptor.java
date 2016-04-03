@@ -45,11 +45,21 @@ public class CatberryAttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Override
   public PsiElement getValueDeclaration(XmlElement xmlElement, String value) {
-    Collection<JSElement> elements = StubIndex.getElements(JSClassIndex.KEY, value, project,
+    CatberryProjectConfigurationManager configurationManager = CatberryProjectConfigurationManager.getInstance(project);
+    PsiDirectory directory = configurationManager.getStoresDirectory();
+    if(directory == null)
+      return super.getValueDeclaration(xmlElement, value);
+    final String requiredPath = directory.getVirtualFile().getPath() + "/" + value+".js";
+
+    int index = value.lastIndexOf('/');
+    String className = index == -1 ? value : value.substring(index+1);
+    Collection<JSElement> elements = StubIndex.getElements(JSClassIndex.KEY, className, project,
         GlobalSearchScope.allScope(project), JSElement.class);
-    for(JSElement element : elements)
-      if(element instanceof JSClass)
+
+    for(JSElement element : elements) {
+      if (element instanceof JSClass &&  element.getContainingFile().getVirtualFile().getPath().equals(requiredPath))
         return element;
+    }
     return super.getValueDeclaration(xmlElement, value);
   }
 
@@ -115,12 +125,16 @@ public class CatberryAttributeDescriptor extends BasicXmlAttributeDescriptor imp
     for(VirtualFile virtualFile : virtualFiles) {
       if(!virtualFile.getPath().startsWith(storesPath))
         continue;
-
+      String prefix = virtualFile.getPath().substring(storesPath.length(), virtualFile.getPath().lastIndexOf("/"));
+      if(prefix.startsWith("/"))
+        prefix = prefix.substring(1);
+      if(prefix.length() != 0)
+        prefix += "/";
       PsiFile psiFile = psiManager.findFile(virtualFile);
       if(psiFile == null)
         continue;
       for(JSClass jsClass: PsiTreeUtil.findChildrenOfType(psiFile, JSClass.class)) {
-        keys.add(jsClass.getName());
+        keys.add(prefix+jsClass.getName());
       }
     }
     return keys.toArray(new String[keys.size()]);
