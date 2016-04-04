@@ -13,6 +13,9 @@ import org.buffagon.intellij.catberry.JsonPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Prokofiev Alex
  */
@@ -44,6 +47,21 @@ public abstract class  BaseConfigurationProvider<T> implements CachedValueProvid
       return null;
 
     return ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(mainJsVFile), JSFile.class);
+  }
+
+  @NotNull
+  protected JsonFile[] findConfigFiles() {
+    VirtualFile configDir = project.getBaseDir().findChild("config");
+    if(configDir == null)
+      return new JsonFile[0];
+    List<JsonFile> files = new LinkedList<JsonFile>();
+    PsiManager psiManager = PsiManager.getInstance(project);
+    for(VirtualFile file : configDir.getChildren()) {
+      JsonFile jsonFile = ObjectUtils.tryCast(psiManager.findFile(file), JsonFile.class);
+      if(jsonFile != null)
+        files.add(jsonFile);
+    }
+    return files.toArray(new JsonFile[files.size()]);
   }
 
   @Nullable

@@ -27,6 +27,9 @@ import org.buffagon.intellij.catberry.settings.providers.TemplateEngineProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Prokofiev Alex
  */
@@ -99,7 +102,19 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
 
     final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
     ComponentsDirectoriesProvider provider = new ComponentsDirectoriesProvider(project, tracker);
-    return CachedValuesManager.getManager(project).getCachedValue(project, provider);
+    String[] res = CachedValuesManager.getManager(project).getCachedValue(project, provider);
+
+    List<PsiDirectory> result = new ArrayList<PsiDirectory>(res.length);
+    for(String path : res) {
+      VirtualFile virtualFile = project.getBaseDir().findFileByRelativePath(path);
+      if(virtualFile == null)
+        continue;
+      PsiManager manager = PsiManager.getInstance(project);
+      PsiDirectory dir = manager.findDirectory(virtualFile);
+      if(dir != null)
+        result.add(dir);
+    }
+    return result.toArray(new PsiDirectory[result.size()]);
   }
 
   @Nullable
@@ -117,7 +132,12 @@ public class CatberryProjectConfigurationManager implements ProjectComponent {
       return null;
     final NotNullLazyValue<ModificationTracker> tracker = getCatberryTracker();
     StoresDirectoryProvider provider = new StoresDirectoryProvider(project, tracker);
-    return CachedValuesManager.getManager(project).getCachedValue(project, provider);
+    String res = CachedValuesManager.getManager(project).getCachedValue(project, provider);
+    VirtualFile virtualFile = project.getBaseDir().findFileByRelativePath(res);
+    if(virtualFile == null)
+      return null;
+    PsiManager manager = PsiManager.getInstance(project);
+    return manager.findDirectory(virtualFile);
   }
 
 
