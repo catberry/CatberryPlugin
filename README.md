@@ -10,8 +10,14 @@ Intellij platform plugin for Catberry JS framework
 * Auto-completion cat-store attributes in template and navigation to store.
 
 #### How to use:
-* Download [plugin](https://yadi.sk/d/Ws4bwFAjq3oxN)
-* Add plugin from disk in your jetbrains ide (tested: Idea, WebStorm)
+* Install plugin from IDE:
+    * Open IDE preferences and navigate to plugins section
+    * Find Catberry Framework support plugin in jetbrains repository and install it
+    * Restart IDE
+* (Alternative) Manual installation:
+    * Download plugin [from JetBrains repository](https://plugins.jetbrains.com/plugin/8283)
+    * Add plugin from disk in your jetbrains ide (tested: Idea, WebStorm)
+    *Restart IDE
 * Create project (for new project):
 	* StaticWeb -> Catberry JS (for Idea)
 	* Catberry JS (for WebStorm)
