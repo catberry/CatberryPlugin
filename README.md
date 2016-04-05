@@ -15,7 +15,7 @@ Intellij platform plugin for Catberry JS framework
     * Find Catberry Framework support plugin in jetbrains repository and install it
     * Restart IDE
 * (Alternative) Manual installation:
-    * Download plugin [from JetBrains repository](https://plugins.jetbrains.com/plugin/8283)
+    * Download plugin from [JetBrains Repository](https://plugins.jetbrains.com/plugin/8283)
     * Add plugin from disk in your jetbrains ide (tested: Idea, WebStorm)
     *Restart IDE
 * Create project (for new project):
